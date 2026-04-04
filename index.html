@@ -26,30 +26,18 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
 }
-
-/* ── VIEWS
-   Key fix: use display:none for inactive views instead of translateX.
-   This avoids ALL Android compositor / touch-interception issues.     */
-.view{
-  display:none;
-  position:fixed;top:0;left:0;right:0;
-  bottom:calc(var(--nav-h) + var(--safe-b));
-  background:var(--bg);
-  flex-direction:column;
-  overflow:hidden;
-}
-.view.active{ display:flex; }
-
+/* Views — display:none/flex avoids all Android touch-interception issues */
+.view{display:none;position:fixed;top:0;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));background:var(--bg);flex-direction:column;overflow:hidden}
+.view.active{display:flex}
 .topbar{display:flex;align-items:center;gap:10px;padding:0 16px;padding-top:var(--safe-t);height:calc(var(--bar-h) + var(--safe-t));background:rgba(247,247,246,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);flex-shrink:0}
 .wordmark{flex:1;font-size:19px;font-weight:300;letter-spacing:-.3px}
 .wordmark strong{font-weight:700}
 .topbar-title{flex:1;font-size:17px;font-weight:600}
 .topbar-mono{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:13px;color:var(--t2);letter-spacing:.5px}
 .topbar-end{display:flex;gap:4px}
-
 .scroll-body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 16px 24px}
 .scroll-body::-webkit-scrollbar{display:none}
-
+/* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;height:36px;border:none;border-radius:999px;font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity 120ms,transform 120ms}
 .btn:active{transform:scale(.96);opacity:.85}
 .btn.accent{background:var(--accent);color:#fff}
@@ -59,7 +47,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .ibtn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:none;background:var(--accent-bg);border-radius:10px;color:var(--t1);cursor:pointer;transition:background 120ms,transform 120ms;flex-shrink:0}
 .ibtn:active{transform:scale(.93)}
 .ibtn.red{color:var(--red);background:var(--red-bg)}
-
+/* Search */
 .search-wrap{padding:10px 16px 8px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
 .search-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:999px;padding:0 14px;height:40px;transition:border-color 150ms,box-shadow 150ms}
 .search-bar:focus-within{border-color:var(--t1);box-shadow:0 0 0 3px rgba(17,17,16,.07)}
@@ -67,7 +55,6 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 #searchInput{flex:1;border:none;background:transparent;outline:none;font-family:'Figtree',sans-serif;font-size:15px;color:var(--t1)}
 #searchInput::placeholder{color:var(--t3)}
 .s-clear{border:none;background:none;cursor:pointer;color:var(--t3);display:flex;align-items:center;padding:2px}
-
 .search-drop{position:absolute;top:calc(var(--bar-h) + var(--safe-t) + 58px);left:16px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.13);z-index:50;overflow:hidden;max-height:55vh;overflow-y:auto}
 .sr{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 100ms}
 .sr:last-child{border-bottom:none}
@@ -76,23 +63,23 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .sr-text{font-size:14px;color:var(--t1);line-height:1.4}
 .sr-text mark{background:#fef08a;border-radius:2px;padding:0 1px;font-style:normal}
 .sr-sub{font-size:12px;color:var(--t3);margin-top:1px}
-
+/* Filter tabs */
 .filter-tabs{display:flex;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg)}
 .filter-tab{flex:1;padding:8px 0;font-family:'Figtree',sans-serif;font-size:13px;font-weight:600;color:var(--t3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:color 150ms,border-color 150ms}
 .filter-tab.active{color:var(--t1);border-bottom-color:var(--t1)}
-
+/* Chips */
 .chips-wrap{flex-shrink:0;overflow:hidden}
 .chips{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:4px 12px;border-radius:999px;border:1.5px solid var(--border2);font-family:'Figtree',sans-serif;font-size:13px;font-weight:500;color:var(--t2);background:transparent;cursor:pointer;white-space:nowrap;transition:all 130ms}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .chip:active{transform:scale(.95)}
-
+/* Sync bar */
 .sync-bar{display:flex;align-items:center;gap:8px;padding:6px 16px;font-size:12px;font-weight:500;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg)}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
-.sync-bar.synced{color:var(--green)}.sync-bar.saving{color:var(--t3)}.sync-bar.error{color:var(--red)}
+.sync-bar.synced{color:var(--green)}.sync-bar.saving{color:var(--t3)}.sync-bar.error{color:var(--red)}.sync-bar.live{color:var(--green)}
 .list-meta{padding:6px 16px 0;font-size:12px;color:var(--t3);flex-shrink:0}
-
+/* Box cards */
 .box-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:10px;cursor:pointer;transition:transform 140ms,box-shadow 140ms}
 .box-card:active{transform:scale(.985);box-shadow:0 1px 4px rgba(0,0,0,.06)}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -107,12 +94,12 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .card-tags{display:flex;flex-wrap:wrap;gap:4px;flex:1}
 .card-tag{font-size:11px;font-weight:500;color:var(--t2);background:var(--accent-bg);padding:2px 8px;border-radius:999px}
 .card-count{font-size:12px;color:var(--t3);white-space:nowrap;flex-shrink:0}
-
+/* Empty state */
 .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:64px 32px 32px}
 .empty-ico{width:64px;height:64px;background:var(--accent-bg);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:var(--t3)}
 .empty-title{font-size:18px;font-weight:600;margin-bottom:8px}
 .empty-sub{font-size:14px;color:var(--t3);line-height:1.55;max-width:240px;margin-bottom:24px}
-
+/* Detail */
 .detail-hero{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px}
 .d-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
 .d-desc{font-size:20px;font-weight:600;line-height:1.3;margin-bottom:12px}
@@ -133,7 +120,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .item-qty{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--t2);flex-shrink:0;min-width:28px;text-align:right}
 .item-del{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:none;background:none;color:var(--t3);cursor:pointer;border-radius:8px;transition:color 120ms,background 120ms;flex-shrink:0}
 .item-del:active{color:var(--red);background:var(--red-bg)}
-
+/* Location cards */
 .loc-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
 .loc-icon{width:38px;height:38px;background:var(--accent-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0}
 .loc-body{flex:1;min-width:0}
@@ -143,11 +130,11 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .loc-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:none;color:var(--t3);cursor:pointer;border-radius:8px;transition:color 120ms,background 120ms}
 .loc-btn:active{background:var(--accent-bg)}
 .loc-btn.del:active{color:var(--red);background:var(--red-bg)}
-
+/* Bottom nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);background:rgba(247,247,246,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;z-index:100}
 .nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;cursor:pointer;color:var(--t3);font-family:'Figtree',sans-serif;font-size:11px;font-weight:500;transition:color 150ms;-webkit-tap-highlight-color:transparent;padding:0}
 .nav-tab.active{color:var(--t1)}
-
+/* Modals */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 250ms}
 .modal-bg.open{opacity:1;pointer-events:all}
 .modal-sheet{width:100%;background:var(--surface);border-radius:22px 22px 0 0;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(100%);transition:transform 300ms cubic-bezier(.22,1,.36,1)}
@@ -157,7 +144,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .modal-title{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:22px}
 .modal-foot{display:flex;gap:10px;margin-top:24px}
 .modal-foot .btn{flex:1;height:44px;font-size:15px}
-
+/* Forms */
 .field{margin-bottom:16px}
 .flbl{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:6px}
 .req{color:var(--red)}
@@ -170,14 +157,14 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .finp.qty{max-width:110px}
 .fsel{width:100%;height:44px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:0 36px 0 14px;font-family:'Figtree',sans-serif;font-size:15px;color:var(--t1);outline:none;transition:border-color 150ms;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239a9a94' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 .fsel:focus{border-color:var(--t1);box-shadow:0 0 0 3px rgba(17,17,16,.07)}
-
+/* Tags */
 .tag-picker{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag-opt{padding:5px 12px;border-radius:999px;border:1.5px solid var(--border2);font-family:'Figtree',sans-serif;font-size:13px;font-weight:500;color:var(--t2);background:transparent;cursor:pointer;transition:all 130ms}
 .tag-opt.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .tag-opt:active{transform:scale(.95)}
 .tag-custom{display:flex;gap:8px;align-items:center}
 .tag-custom .finp{flex:1}
-
+/* Photo zone */
 .photo-zone{border:1.5px dashed var(--border2);border-radius:12px;overflow:hidden}
 .photo-zone-cta{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px;cursor:pointer;color:var(--t3);font-size:14px;transition:color 150ms}
 .photo-zone-cta:hover{color:var(--t2)}
@@ -186,29 +173,30 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .prev-item{position:relative}
 .prev-item img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block}
 .prev-rm{position:absolute;top:-6px;right:-6px;width:20px;height:20px;background:var(--red);color:#fff;border:2px solid #fff;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
-
+/* Upload bar */
 .upload-bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--border);z-index:999}
 .upload-fill{height:100%;background:var(--t1);transition:width 300ms ease;width:0%}
-
+/* Toast */
 .toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--t1);color:#fff;font-size:14px;font-weight:500;padding:10px 20px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity 200ms,transform 200ms ease;white-space:nowrap;max-width:calc(100vw - 48px);overflow:hidden;text-overflow:ellipsis;z-index:500}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{background:var(--green)}.toast.err{background:var(--red)}
-
+/* Settings */
 .s-grp{margin-bottom:24px}
 .s-grp-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--t3);padding:0 4px;margin-bottom:8px}
 .s-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px}
 .s-desc{font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:16px}
 .s-lbl{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:6px;margin-top:14px}
-.s-inp{width:100%;height:44px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:0 14px;font-family:'Figtree',sans-serif;font-size:14px;color:var(--t1);outline:none;transition:border-color 150ms;margin-bottom:4px;-webkit-appearance:none}
+.s-lbl:first-of-type{margin-top:0}
+.s-inp{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-family:'Figtree',sans-serif;font-size:14px;color:var(--t1);outline:none;transition:border-color 150ms;-webkit-appearance:none;display:block}
 .s-inp:focus{border-color:var(--t1)}
 .s-inp::placeholder{color:var(--t3)}
-.s-hint{font-size:12px;color:var(--t3);margin-bottom:12px;line-height:1.5}
+.s-hint{font-size:12px;color:var(--t3);margin-top:6px;margin-bottom:4px;line-height:1.5}
 .s-hint a{color:var(--blue)}
-.s-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.drive-status{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:14px}
-.drive-status.online{background:var(--green-bg);color:var(--green)}
-.drive-status.offline{background:var(--accent-bg);color:var(--t3)}
-.drive-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.sync-status-pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:14px}
+.sync-status-pill.online{background:var(--green-bg);color:var(--green)}
+.sync-status-pill.offline{background:var(--accent-bg);color:var(--t3)}
+.sync-dot-pill{width:7px;height:7px;border-radius:50%;background:currentColor}
 .guide{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
 .guide summary{font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;list-style:none}
 .guide summary::-webkit-details-marker{display:none}
@@ -219,7 +207,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .step-n{width:20px;height:20px;background:var(--t1);color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .step a{color:var(--blue)}
 .step code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:'DM Mono',monospace;font-size:12px}
-
+/* Lightbox */
 .lightbox{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
 .lightbox.hidden{display:none}
 .lb-bg{position:absolute;inset:0;background:rgba(0,0,0,.9)}
@@ -228,7 +216,6 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:40px;height:40px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .lb-prev{left:12px}.lb-next{right:12px}
 .lb-ctr{position:absolute;bottom:max(24px,var(--safe-b));left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.7);z-index:2;background:rgba(0,0,0,.4);padding:4px 12px;border-radius:999px}
-
 .hidden{display:none!important}
 </style>
 </head>
@@ -237,7 +224,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 <div id="toast" class="toast"></div>
 <div id="uploadBar" class="upload-bar hidden"><div id="uploadFill" class="upload-fill"></div></div>
 
-<!-- BOXES -->
+<!-- ═══ BOXES ═══ -->
 <div id="view-boxes" class="view active">
   <header class="topbar">
     <div class="wordmark">Black<strong>Box</strong></div>
@@ -265,7 +252,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   <div class="scroll-body" id="boxList"></div>
 </div>
 
-<!-- DETAIL -->
+<!-- ═══ DETAIL ═══ -->
 <div id="view-detail" class="view">
   <header class="topbar">
     <button class="ibtn" id="backBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -278,7 +265,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   <div class="scroll-body" id="detailContent"></div>
 </div>
 
-<!-- LOCATIONS -->
+<!-- ═══ LOCATIONS ═══ -->
 <div id="view-locations" class="view">
   <header class="topbar">
     <div class="topbar-title">Locations</div>
@@ -290,62 +277,69 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   <div class="scroll-body" id="locationList"></div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ═══ SETTINGS ═══ -->
 <div id="view-settings" class="view">
   <header class="topbar"><div class="topbar-title">Settings</div></header>
   <div class="scroll-body">
+
     <div class="s-grp">
-      <div class="s-grp-lbl">Sync — Google Sheets</div>
+      <div class="s-grp-lbl">Firebase Sync</div>
       <div class="s-card">
-        <div id="syncStatus" class="drive-status offline"><span class="drive-dot"></span><span id="syncStatusText">Not connected</span></div>
-        <p class="s-desc">Box data syncs to a <strong>shared Google Sheet</strong>. Photos go to a <strong>shared Drive folder</strong>. Everyone uses the same IDs; each person signs in with their own Google account.</p>
-        <label class="s-lbl">Google OAuth Client ID</label>
-        <input id="gClientId" class="s-inp" placeholder="xxxxxx.apps.googleusercontent.com" autocomplete="off"/>
-        <p class="s-hint">Create a Web app OAuth 2.0 credential in <a href="https://console.cloud.google.com" target="_blank" rel="noopener">Google Cloud Console</a> with your GitHub Pages URL as an authorised origin.</p>
-        <label class="s-lbl">Shared Google Sheet ID</label>
-        <input id="gSheetId" class="s-inp" placeholder="Paste Sheet ID from URL" autocomplete="off"/>
-        <p class="s-hint">Create &amp; share a Sheet (Editor). ID is in the URL: <code>spreadsheets/d/SHEET_ID/edit</code></p>
-        <label class="s-lbl">Shared Drive Folder ID</label>
-        <input id="gFolderId" class="s-inp" placeholder="Paste Drive folder ID" autocomplete="off"/>
-        <p class="s-hint">Create &amp; share a Drive folder (Editor). ID is in URL: <code>drive/folders/FOLDER_ID</code></p>
+        <div id="syncStatus" class="sync-status-pill offline">
+          <span class="sync-dot-pill"></span>
+          <span id="syncStatusText">Not connected</span>
+        </div>
+        <p class="s-desc">Black Box uses <strong>Firebase</strong> to sync boxes and photos across all household members in real time. No sign-in needed — just paste the same config on each device.</p>
+        <label class="s-lbl">Firebase Config JSON</label>
+        <textarea id="fbConfig" class="s-inp" rows="7" style="font-family:'DM Mono',monospace;font-size:11px;resize:vertical;line-height:1.6" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "your-app.firebaseapp.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc"
+}'></textarea>
+        <p class="s-hint">Paste the full <code>firebaseConfig</code> object from your Firebase project settings.</p>
         <div class="s-actions">
-          <button class="btn accent" id="saveConnectBtn">Save &amp; Sign In</button>
-          <button class="btn ghost" id="reconnectBtn" style="display:none">Reconnect</button>
-          <button class="btn ghost" id="syncNowBtn" style="display:none">Sync Now</button>
+          <button class="btn accent" id="saveFirebaseBtn">Save &amp; Connect</button>
+          <button class="btn ghost" id="syncNowBtn" style="display:none">Pull Latest</button>
           <button class="btn ghost" id="disconnectBtn" style="display:none">Disconnect</button>
         </div>
         <details class="guide">
-          <summary>Step-by-step setup</summary>
+          <summary>How to set up Firebase (free, ~5 min)</summary>
           <div class="steps">
-            <div class="step"><span class="step-n">1</span><span>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → create project <strong>BlackBox</strong></span></div>
-            <div class="step"><span class="step-n">2</span><span>Enable <strong>Google Sheets API</strong> and <strong>Google Drive API</strong></span></div>
-            <div class="step"><span class="step-n">3</span><span>OAuth consent screen → External → add scopes <code>spreadsheets</code> and <code>drive.file</code></span></div>
-            <div class="step"><span class="step-n">4</span><span>Credentials → OAuth Client ID → Web app → add your GitHub Pages URL as authorised origin</span></div>
-            <div class="step"><span class="step-n">5</span><span>Create &amp; share a Google Sheet (Editor access) → paste Sheet ID above</span></div>
-            <div class="step"><span class="step-n">6</span><span>Create &amp; share a Drive folder (Editor) → paste Folder ID above</span></div>
-            <div class="step"><span class="step-n">7</span><span>Each household member: open Settings, enter same 3 values, tap Save &amp; Sign In</span></div>
+            <div class="step"><span class="step-n">1</span><span>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> → Add project (use your Google account)</span></div>
+            <div class="step"><span class="step-n">2</span><span>In the left menu, click <strong>Firestore Database</strong> → Create database → choose <strong>Start in test mode</strong> → pick a region → Enable</span></div>
+            <div class="step"><span class="step-n">3</span><span>In the left menu, click <strong>Storage</strong> → Get started → <strong>Start in test mode</strong> → Done</span></div>
+            <div class="step"><span class="step-n">4</span><span>Click the <strong>gear icon</strong> → Project settings → scroll to <em>Your apps</em> → click <strong>&lt;/&gt;</strong> (Web) → register with any nickname → copy the <code>firebaseConfig</code> block</span></div>
+            <div class="step"><span class="step-n">5</span><span>Paste the config JSON above (just the object inside the curly braces) and tap <strong>Save &amp; Connect</strong></span></div>
+            <div class="step"><span class="step-n">6</span><span>Share the same JSON with everyone in the household. They paste it in their Settings too. That's it — no accounts, no passwords.</span></div>
           </div>
         </details>
       </div>
     </div>
+
     <div class="s-grp">
       <div class="s-grp-lbl">Data</div>
       <div class="s-card">
-        <p class="s-desc">Export a local JSON backup or clear all data.</p>
+        <p class="s-desc">Export a local JSON backup or wipe all local data.</p>
         <div class="s-actions">
           <button class="btn accent" id="exportBtn">Export JSON</button>
           <button class="btn danger" id="clearDataBtn">Clear All Data</button>
         </div>
       </div>
     </div>
+
     <div class="s-grp">
       <div class="s-grp-lbl">About</div>
-      <div class="s-card"><p class="s-desc">Black Box v1.1 · Offline-first PWA. Data stored locally, synced to Google Sheets. Photos backed up to shared Google Drive.</p></div>
+      <div class="s-card">
+        <p class="s-desc">Black Box v2.0 · Offline-first PWA. Box data synced via Firebase Firestore. Photos stored in Firebase Storage. Works without internet; syncs when online.</p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- ═══ BOTTOM NAV ═══ -->
 <nav class="bottom-nav">
   <button class="nav-tab active" data-view="boxes">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -361,7 +355,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   </button>
 </nav>
 
-<!-- MODAL: BOX -->
+<!-- ═══ MODAL: BOX ═══ -->
 <div id="modal-box" class="modal-bg">
   <div class="modal-sheet"><div class="modal-puller"></div>
   <div class="modal-body">
@@ -388,7 +382,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
     </div>
     <div class="field">
       <label class="flbl">Photos</label>
-      <!-- IMPORTANT: no capture attribute — shows camera/gallery/files chooser on Android -->
+      <!-- No capture attribute: Android shows camera/gallery/files chooser -->
       <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none"/>
       <div class="photo-zone">
         <label for="photoFileInput" class="photo-zone-cta">
@@ -405,7 +399,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   </div></div>
 </div>
 
-<!-- MODAL: ITEM -->
+<!-- ═══ MODAL: ITEM ═══ -->
 <div id="modal-item" class="modal-bg">
   <div class="modal-sheet"><div class="modal-puller"></div>
   <div class="modal-body">
@@ -420,7 +414,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   </div></div>
 </div>
 
-<!-- MODAL: LOCATION -->
+<!-- ═══ MODAL: LOCATION ═══ -->
 <div id="modal-location" class="modal-bg">
   <div class="modal-sheet"><div class="modal-puller"></div>
   <div class="modal-body">
@@ -434,7 +428,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   </div></div>
 </div>
 
-<!-- LIGHTBOX -->
+<!-- ═══ LIGHTBOX ═══ -->
 <div id="lightbox" class="lightbox hidden">
   <div class="lb-bg" id="lbBg"></div>
   <button class="lb-close" id="lbClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -446,473 +440,878 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 
 <script>
 'use strict';
-const LS={BOXES:'bb_boxes',LOCS:'bb_locs',GCID:'bb_gcid',GTOKEN:'bb_gtoken',SHEET:'bb_sheet',FOLDER:'bb_folder'};
-const DEFAULT_TAGS=['Christmas','Winter','Summer','Spring','Autumn','Clothes','Shoes','Bedding','Pillows','Towels','Electronics','Tools','Sports','Kids','Books','Kitchen','Holiday','Décor','Camping','Office'];
-const S={boxes:[],locations:[],currentId:null,editBoxId:null,editItemId:null,editLocId:null,activeTag:null,activeLoc:null,filterTab:'tags',pendingPhotos:[],lbPhotos:[],lbIdx:0,gToken:null,gTokenClient:null};
-const $=id=>document.getElementById(id);
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
+/* ── Constants ── */
+const LS = { BOXES:'bb_boxes', LOCS:'bb_locs', FB_CFG:'bb_fb_cfg' };
+const DEFAULT_TAGS = ['Christmas','Winter','Summer','Spring','Autumn','Clothes','Shoes',
+  'Bedding','Pillows','Towels','Electronics','Tools','Sports','Kids','Books',
+  'Kitchen','Holiday','Décor','Camping','Office'];
+
+/* ── State ── */
+const S = {
+  boxes:[], locations:[],
+  currentId:null, editBoxId:null, editItemId:null, editLocId:null,
+  activeTag:null, activeLoc:null, filterTab:'tags',
+  pendingPhotos:[], lbPhotos:[], lbIdx:0,
+};
+
+/* ── Helpers ── */
+const $    = id => document.getElementById(id);
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc  = s  => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+
+/* ── Toast ── */
 let _tt;
-function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');clearTimeout(_tt);_tt=setTimeout(()=>el.className='toast',2800);}
+function toast(msg, type=''){
+  const el=$('toast');
+  el.textContent=msg;
+  el.className='toast show'+(type?' '+type:'');
+  clearTimeout(_tt);
+  _tt=setTimeout(()=>el.className='toast', 2800);
+}
 
+/* ── Local storage ── */
 function persist(){
-  try{localStorage.setItem(LS.BOXES,JSON.stringify(S.boxes));localStorage.setItem(LS.LOCS,JSON.stringify(S.locations));}
-  catch(e){toast('Storage full','err');}
+  try{
+    localStorage.setItem(LS.BOXES, JSON.stringify(S.boxes));
+    localStorage.setItem(LS.LOCS,  JSON.stringify(S.locations));
+  }catch(e){ toast('Storage full','err'); }
   scheduleSync();
 }
+
 function load(){
-  try{S.boxes=JSON.parse(localStorage.getItem(LS.BOXES)||'[]');}catch{S.boxes=[];}
-  try{S.locations=JSON.parse(localStorage.getItem(LS.LOCS)||'[]');}catch{S.locations=[];}
-  S.gToken=localStorage.getItem(LS.GTOKEN)||null;
-  ['gClientId','gSheetId','gFolderId'].forEach(k=>{const id=k==='gClientId'?LS.GCID:k==='gSheetId'?LS.SHEET:LS.FOLDER;const el=$(k);if(el)el.value=localStorage.getItem(id)||'';});
-  updateSyncUI();
+  try{ S.boxes     = JSON.parse(localStorage.getItem(LS.BOXES)||'[]'); }catch{ S.boxes=[]; }
+  try{ S.locations = JSON.parse(localStorage.getItem(LS.LOCS) ||'[]'); }catch{ S.locations=[]; }
+  const saved = localStorage.getItem(LS.FB_CFG)||'';
+  if($('fbConfig')) $('fbConfig').value = saved;
 }
 
-/* ── NAVIGATION: use display:flex/none — simplest, most reliable on Android ── */
-let _view='boxes';
+/* ══════════════════════════════════════════════════════
+   FIREBASE — Firestore (data sync) + Storage (photos)
+   No OAuth. No token expiry. Paste config once, done.
+══════════════════════════════════════════════════════ */
+
+const FB = { ready: false };
+
+function loadFirebaseSDKs(){
+  return new Promise((resolve, reject) => {
+    if(window.firebase){ resolve(); return; }
+    const urls = [
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js',
+    ];
+    let done = 0;
+    urls.forEach(src => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload  = () => { if(++done === urls.length) resolve(); };
+      s.onerror = () => reject(new Error('Could not load Firebase SDK — check internet connection'));
+      document.head.appendChild(s);
+    });
+  });
+}
+
+async function initFirebase(){
+  const raw = localStorage.getItem(LS.FB_CFG);
+  if(!raw) return false;
+  try{
+    const cfg = JSON.parse(raw);
+    await loadFirebaseSDKs();
+    // Only initialise once — Firebase throws if you call initializeApp twice
+    if(!window.firebase.apps.length){
+      window.firebase.initializeApp(cfg);
+    }
+    FB.ready = true;
+    return true;
+  }catch(e){
+    console.error('Firebase init:', e);
+    toast('Firebase error: '+e.message, 'err');
+    return false;
+  }
+}
+
+const fbDoc = () => window.firebase.firestore().collection('blackbox').doc('data');
+const fbSto = () => window.firebase.storage();
+
+/* Push local data to Firestore */
+let _syncTimer = null;
+function scheduleSync(){
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(pushData, 2000);
+}
+
+async function pushData(){
+  if(!FB.ready) return;
+  setSyncBar('saving','Saving…');
+  try{
+    await fbDoc().set({
+      boxes:     S.boxes,
+      locations: S.locations,
+      updatedAt: new Date().toISOString(),
+    });
+    setSyncBar('synced','Synced · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+  }catch(e){
+    setSyncBar('error','Sync failed');
+    toast('Sync failed: '+e.message, 'err');
+  }
+}
+
+/* Pull latest data from Firestore */
+async function pullData(){
+  if(!FB.ready) return;
+  setSyncBar('saving','Loading…');
+  try{
+    const snap = await fbDoc().get();
+    if(!snap.exists){ setSyncBar('synced','Connected — no data yet'); return; }
+    applyData(snap.data());
+    setSyncBar('synced','Synced');
+    toast('Data loaded ✓','ok');
+  }catch(e){
+    setSyncBar('error','Load failed');
+    toast('Load failed: '+e.message, 'err');
+  }
+}
+
+function applyData(d){
+  if(Array.isArray(d.boxes)){
+    S.boxes = d.boxes;
+    localStorage.setItem(LS.BOXES, JSON.stringify(S.boxes));
+  }
+  if(Array.isArray(d.locations)){
+    S.locations = d.locations;
+    localStorage.setItem(LS.LOCS, JSON.stringify(S.locations));
+  }
+  renderBoxList();
+  renderLocationList();
+}
+
+/* Real-time listener — updates all devices the moment Firestore changes */
+let _unsubscribe = null;
+function startLiveSync(){
+  if(!FB.ready) return;
+  if(_unsubscribe){ _unsubscribe(); }
+  _unsubscribe = fbDoc().onSnapshot(
+    snap => {
+      if(!snap.exists) return;
+      // Only apply if the change came from another device
+      // (our own pushData will also trigger this, but applyData is idempotent)
+      applyData(snap.data());
+      setSyncBar('live','● Live');
+    },
+    err => setSyncBar('error','Live sync error: '+err.message)
+  );
+}
+
+/* ── Photo upload to Firebase Storage ── */
+function showBar(show){ $('uploadBar').classList.toggle('hidden',!show); if(show) $('uploadFill').style.width='0%'; }
+function setBar(pct)  { $('uploadFill').style.width = pct+'%'; }
+
+async function uploadPhotos(){
+  // Split pending into already-uploaded vs new files
+  const already = S.pendingPhotos.filter(p => !p.file || p.storageRef);
+  const toUp    = S.pendingPhotos.filter(p =>  p.file && !p.storageRef);
+  const results = already.map(p => ({ url: p.url, storageRef: p.storageRef||null }));
+
+  if(!toUp.length) return results;
+
+  if(!FB.ready){
+    // No Firebase — store as base64 locally
+    toUp.forEach(p => results.push({ url: p.dataUrl, storageRef: null }));
+    toast('Photos saved locally — add Firebase config to back them up');
+    return results;
+  }
+
+  showBar(true);
+  let uploaded = 0;
+  for(let i=0; i<toUp.length; i++){
+    setBar((i / toUp.length) * 90);
+    const p = toUp[i];
+    try{
+      const safeName = p.file.name.replace(/[^a-z0-9._-]/gi, '_');
+      const path     = `photos/${Date.now()}_${safeName}`;
+      const ref      = fbSto().ref(path);
+      // Upload with metadata
+      const snap     = await ref.put(p.file, { contentType: p.file.type });
+      const url      = await snap.ref.getDownloadURL();
+      results.push({ url, storageRef: path });
+      uploaded++;
+    }catch(e){
+      console.error('Photo upload failed:', e);
+      toast('Photo upload failed: '+e.message, 'err');
+      results.push({ url: p.dataUrl, storageRef: null });
+    }
+  }
+
+  setBar(100);
+  setTimeout(() => showBar(false), 600);
+  if(uploaded > 0) toast(`${uploaded} photo${uploaded!==1?'s':''} uploaded ✓`, 'ok');
+  return results;
+}
+
+/* ── Sync UI ── */
+function updateSyncUI(){
+  const ok = FB.ready;
+  const pill = $('syncStatus');
+  if(pill){
+    pill.className = 'sync-status-pill ' + (ok ? 'online' : 'offline');
+    $('syncStatusText').textContent = ok ? 'Connected to Firebase' : 'Not connected';
+  }
+  const sb = $('syncBar');
+  if(sb) sb.classList.toggle('hidden', !ok);
+  if($('saveFirebaseBtn')) $('saveFirebaseBtn').style.display = ok ? 'none' : '';
+  if($('syncNowBtn'))      $('syncNowBtn').style.display      = ok ? ''     : 'none';
+  if($('disconnectBtn'))   $('disconnectBtn').style.display   = ok ? ''     : 'none';
+}
+
+function setSyncBar(cls, text){
+  const sb = $('syncBar'); if(!sb) return;
+  sb.className = 'sync-bar '+cls;
+  $('syncText').textContent = text;
+}
+
+/* ══════════════════════════════════
+   APP LOGIC
+══════════════════════════════════ */
+
+/* ── Navigation ── */
+let _view = 'boxes';
 function goTo(v){
-  if(v===_view) return;
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  const t=$('view-'+v); if(!t) return;
+  if(v === _view) return;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  const t = $('view-'+v); if(!t) return;
   t.classList.add('active');
-  _view=v;
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  _view = v;
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.view===v));
 }
 
-function getBox(id){return S.boxes.find(b=>b.id===id)||null;}
+/* ── Box list ── */
+function getBox(id){ return S.boxes.find(b => b.id===id) || null; }
 
 function renderBoxList(){
   let boxes;
-  if(S.activeLoc) boxes=S.boxes.filter(b=>b.location===S.activeLoc);
-  else if(S.activeTag) boxes=S.boxes.filter(b=>(b.tags||[]).includes(S.activeTag));
-  else boxes=S.boxes;
-  renderTagChips(); renderLocChips();
-  const meta=$('listMeta');
-  if(S.activeLoc){meta.textContent=`Location: ${S.activeLoc} · ${boxes.length} box${boxes.length!==1?'es':''}`;meta.classList.remove('hidden');}
-  else if(S.activeTag){meta.textContent=`Tag: ${S.activeTag} · ${boxes.length} box${boxes.length!==1?'es':''}`;meta.classList.remove('hidden');}
-  else{meta.classList.add('hidden');}
-  const el=$('boxList');
+  if     (S.activeLoc)  boxes = S.boxes.filter(b => b.location === S.activeLoc);
+  else if(S.activeTag)  boxes = S.boxes.filter(b => (b.tags||[]).includes(S.activeTag));
+  else                  boxes = S.boxes;
+
+  renderTagChips();
+  renderLocChips();
+
+  const meta = $('listMeta');
+  if(S.activeLoc){
+    meta.textContent = `Location: ${S.activeLoc} · ${boxes.length} box${boxes.length!==1?'es':''}`;
+    meta.classList.remove('hidden');
+  }else if(S.activeTag){
+    meta.textContent = `Tag: ${S.activeTag} · ${boxes.length} box${boxes.length!==1?'es':''}`;
+    meta.classList.remove('hidden');
+  }else{
+    meta.classList.add('hidden');
+  }
+
+  const el = $('boxList');
   if(!boxes.length){
-    const w=S.activeLoc?`in "${S.activeLoc}"`:S.activeTag?`tagged "${S.activeTag}"`:null;
-    el.innerHTML=`<div class="empty"><div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><div class="empty-title">${w?`No boxes ${w}`:'No boxes yet'}</div><p class="empty-sub">${w?'Try clearing the filter.':'Tap "New Box" to start cataloguing.'}</p></div>`;
+    const what = S.activeLoc ? `in "${S.activeLoc}"` : S.activeTag ? `tagged "${S.activeTag}"` : null;
+    el.innerHTML = `<div class="empty">
+      <div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+      <div class="empty-title">${what ? `No boxes ${what}` : 'No boxes yet'}</div>
+      <p class="empty-sub">${what ? 'Try clearing the filter.' : 'Tap "New Box" to start cataloguing.'}</p>
+    </div>`;
     return;
   }
-  el.innerHTML=boxes.map((box,i)=>{
-    const items=box.items||[],photos=box.photos||[],tags=box.tags||[];
-    const thumbs=photos.slice(0,3),extra=photos.length>3?photos.length-3:0;
+
+  el.innerHTML = boxes.map(box => {
+    const items  = box.items  || [];
+    const photos = box.photos || [];
+    const tags   = box.tags   || [];
+    const thumbs = photos.slice(0,3);
+    const extra  = photos.length > 3 ? photos.length - 3 : 0;
     return `<div class="box-card" data-id="${box.id}" tabindex="0" role="button">
-      <div class="card-row1"><span class="card-id">BOX #${esc(box.boxId)}</span><span class="card-loc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(box.location)}</span></div>
-      ${box.description?`<div class="card-desc">${esc(box.description)}</div>`:''}
-      ${thumbs.length?`<div class="card-thumbs">${thumbs.map(p=>`<img class="card-thumb" src="${esc(p.url)}" loading="lazy" alt=""/>`).join('')}${extra?`<div class="card-thumb-more">+${extra}</div>`:''}</div>`:''}
-      <div class="card-foot"><div class="card-tags">${tags.slice(0,4).map(t=>`<span class="card-tag">${esc(t)}</span>`).join('')}</div><span class="card-count">${items.length} item${items.length!==1?'s':''}</span></div>
+      <div class="card-row1">
+        <span class="card-id">BOX #${esc(box.boxId)}</span>
+        <span class="card-loc">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${esc(box.location)}
+        </span>
+      </div>
+      ${box.description ? `<div class="card-desc">${esc(box.description)}</div>` : ''}
+      ${thumbs.length ? `<div class="card-thumbs">
+        ${thumbs.map(p=>`<img class="card-thumb" src="${esc(p.url)}" loading="lazy" alt=""/>`).join('')}
+        ${extra ? `<div class="card-thumb-more">+${extra}</div>` : ''}
+      </div>` : ''}
+      <div class="card-foot">
+        <div class="card-tags">${tags.slice(0,4).map(t=>`<span class="card-tag">${esc(t)}</span>`).join('')}</div>
+        <span class="card-count">${items.length} item${items.length!==1?'s':''}</span>
+      </div>
     </div>`;
   }).join('');
-  el.querySelectorAll('.box-card').forEach(c=>{c.addEventListener('click',()=>openDetail(c.dataset.id));c.addEventListener('keydown',e=>{if(e.key==='Enter')openDetail(c.dataset.id);});});
+
+  el.querySelectorAll('.box-card').forEach(c => {
+    c.addEventListener('click',   () => openDetail(c.dataset.id));
+    c.addEventListener('keydown', e  => { if(e.key==='Enter') openDetail(c.dataset.id); });
+  });
 }
 
+/* ── Filter chips ── */
 function setFilterTab(tab){
-  S.filterTab=tab;
-  $('chipsWrapTags').classList.toggle('hidden',tab!=='tags');
-  $('chipsWrapLocs').classList.toggle('hidden',tab!=='locs');
-  $('filterTabTags').classList.toggle('active',tab==='tags');
-  $('filterTabLocs').classList.toggle('active',tab==='locs');
-}
-function renderTagChips(){
-  const all=[...new Set(S.boxes.flatMap(b=>b.tags||[]))].sort();
-  const s=$('chips'); if(!all.length){s.innerHTML='';return;}
-  s.innerHTML=[['','All'],...all.map(t=>[t,t])].map(([v,l])=>`<button class="chip${(v===''?!S.activeTag:S.activeTag===v)&&S.filterTab==='tags'?' on':''}" data-tag="${esc(v)}">${esc(l)}</button>`).join('');
-  s.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{S.activeTag=c.dataset.tag||null;S.activeLoc=null;setFilterTab('tags');renderBoxList();}));
-}
-function renderLocChips(){
-  const s=$('chipsLocs'); if(!s) return;
-  const locs=S.locations.map(l=>l.name).sort();
-  if(!locs.length){s.innerHTML='<span style="font-size:13px;color:var(--t3);padding:2px 4px">No locations yet — add them in the Locations tab</span>';return;}
-  s.innerHTML=[['','All'],...locs.map(l=>[l,l])].map(([v,l])=>`<button class="chip${(v===''?!S.activeLoc:S.activeLoc===v)&&S.filterTab==='locs'?' on':''}" data-loc="${esc(v)}">${esc(l)}</button>`).join('');
-  s.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{S.activeLoc=c.dataset.loc||null;S.activeTag=null;setFilterTab('locs');renderBoxList();}));
+  S.filterTab = tab;
+  $('chipsWrapTags').classList.toggle('hidden', tab !== 'tags');
+  $('chipsWrapLocs').classList.toggle('hidden', tab !== 'locs');
+  $('filterTabTags').classList.toggle('active',  tab === 'tags');
+  $('filterTabLocs').classList.toggle('active',  tab === 'locs');
 }
 
-function openDetail(id){
-  const box=getBox(id); if(!box) return;
-  S.currentId=id; $('detailLabel').textContent=`BOX #${box.boxId}`;
-  renderDetail(box); goTo('detail');
+function renderTagChips(){
+  const all = [...new Set(S.boxes.flatMap(b => b.tags||[]))].sort();
+  const s   = $('chips');
+  if(!all.length){ s.innerHTML=''; return; }
+  s.innerHTML = [['','All'], ...all.map(t=>[t,t])].map(([v,l]) =>
+    `<button class="chip${(v===''?!S.activeTag:S.activeTag===v)&&S.filterTab==='tags'?' on':''}" data-tag="${esc(v)}">${esc(l)}</button>`
+  ).join('');
+  s.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    S.activeTag = c.dataset.tag || null; S.activeLoc = null;
+    setFilterTab('tags'); renderBoxList();
+  }));
 }
+
+function renderLocChips(){
+  const s    = $('chipsLocs'); if(!s) return;
+  const locs = S.locations.map(l => l.name).sort();
+  if(!locs.length){
+    s.innerHTML = '<span style="font-size:13px;color:var(--t3);padding:2px 4px">No locations yet — add them in the Locations tab</span>';
+    return;
+  }
+  s.innerHTML = [['','All'], ...locs.map(l=>[l,l])].map(([v,l]) =>
+    `<button class="chip${(v===''?!S.activeLoc:S.activeLoc===v)&&S.filterTab==='locs'?' on':''}" data-loc="${esc(v)}">${esc(l)}</button>`
+  ).join('');
+  s.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    S.activeLoc = c.dataset.loc || null; S.activeTag = null;
+    setFilterTab('locs'); renderBoxList();
+  }));
+}
+
+/* ── Box detail ── */
+function openDetail(id){
+  const box = getBox(id); if(!box) return;
+  S.currentId = id;
+  $('detailLabel').textContent = `BOX #${box.boxId}`;
+  renderDetail(box);
+  goTo('detail');
+}
+
 function renderDetail(box){
-  const items=box.items||[],photos=box.photos||[],tags=box.tags||[];
-  $('detailContent').innerHTML=`
+  const items  = box.items  || [];
+  const photos = box.photos || [];
+  const tags   = box.tags   || [];
+
+  $('detailContent').innerHTML = `
     <div class="detail-hero">
       <div class="d-id">BOX #${esc(box.boxId)}</div>
-      ${box.description?`<div class="d-desc">${esc(box.description)}</div>`:''}
-      <div class="d-loc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(box.location)}</div>
-      ${tags.length?`<div class="d-tags">${tags.map(t=>`<span class="d-tag">${esc(t)}</span>`).join('')}</div>`:''}
+      ${box.description ? `<div class="d-desc">${esc(box.description)}</div>` : ''}
+      <div class="d-loc">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${esc(box.location)}
+      </div>
+      ${tags.length ? `<div class="d-tags">${tags.map(t=>`<span class="d-tag">${esc(t)}</span>`).join('')}</div>` : ''}
     </div>
-    ${photos.length?`<div class="photos-block"><div class="sec-hdr"><span class="sec-lbl">Photos (${photos.length})</span></div><div class="photo-grid-3" id="dPhotoGrid">${photos.map((p,i)=>`<img src="${esc(p.url)}" data-idx="${i}" loading="lazy" alt=""/>`).join('')}</div></div>`:''}
+
+    ${photos.length ? `
+    <div class="photos-block">
+      <div class="sec-hdr"><span class="sec-lbl">Photos (${photos.length})</span></div>
+      <div class="photo-grid-3" id="dPhotoGrid">
+        ${photos.map((p,i)=>`<img src="${esc(p.url)}" data-idx="${i}" loading="lazy" alt=""/>`).join('')}
+      </div>
+    </div>` : ''}
+
     <div class="items-block">
-      <div class="sec-hdr"><span class="sec-lbl">Contents (${items.length})</span><button class="btn ghost sm" id="openAddItem">+ Add item</button></div>
-      <div id="itemsList">${items.length?items.map(it=>`<div class="item-row"><div class="item-body"><div class="item-name">${esc(it.name)}</div>${it.notes?`<div class="item-notes">${esc(it.notes)}</div>`:''}</div>${it.qty>1?`<div class="item-qty">×${it.qty}</div>`:''}<button class="item-del" data-iid="${it.id}" aria-label="Remove"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join(''):'<div style="padding:20px 0;text-align:center;color:var(--t3);font-size:14px">No items yet</div>'}</div>
+      <div class="sec-hdr">
+        <span class="sec-lbl">Contents (${items.length})</span>
+        <button class="btn ghost sm" id="openAddItem">+ Add item</button>
+      </div>
+      <div id="itemsList">
+        ${items.length
+          ? items.map(it => `
+            <div class="item-row">
+              <div class="item-body">
+                <div class="item-name">${esc(it.name)}</div>
+                ${it.notes ? `<div class="item-notes">${esc(it.notes)}</div>` : ''}
+              </div>
+              ${it.qty > 1 ? `<div class="item-qty">×${it.qty}</div>` : ''}
+              <button class="item-del" data-iid="${it.id}" aria-label="Remove">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>`).join('')
+          : '<div style="padding:20px 0;text-align:center;color:var(--t3);font-size:14px">No items yet</div>'
+        }
+      </div>
     </div>`;
-  const dg=$('dPhotoGrid');
-  if(dg) dg.querySelectorAll('img').forEach(img=>img.addEventListener('click',()=>{S.lbPhotos=photos.map(p=>p.url);S.lbIdx=+img.dataset.idx;openLightbox();}));
-  const ai=$('openAddItem'); if(ai) ai.addEventListener('click',()=>openItemModal());
-  $('detailContent').querySelectorAll('.item-del').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();deleteItem(b.dataset.iid);}));
+
+  const dg = $('dPhotoGrid');
+  if(dg) dg.querySelectorAll('img').forEach(img => img.addEventListener('click', () => {
+    S.lbPhotos = photos.map(p => p.url);
+    S.lbIdx    = +img.dataset.idx;
+    openLightbox();
+  }));
+
+  const ai = $('openAddItem');
+  if(ai) ai.addEventListener('click', () => openItemModal());
+
+  $('detailContent').querySelectorAll('.item-del').forEach(b =>
+    b.addEventListener('click', e => { e.stopPropagation(); deleteItem(b.dataset.iid); })
+  );
 }
 
+/* ── Box CRUD ── */
 function populateLocationSelect(sel=''){
-  const s=$('f-location');
-  s.innerHTML='<option value="">— Select a location —</option>';
-  S.locations.forEach(l=>{const o=document.createElement('option');o.value=l.name;o.textContent=l.name;if(l.name===sel)o.selected=true;s.appendChild(o);});
-  if(sel&&!S.locations.find(l=>l.name===sel)){const o=document.createElement('option');o.value=sel;o.textContent=sel+' (unlisted)';o.selected=true;s.appendChild(o);}
-}
-function openBoxModal(editId=null){
-  S.editBoxId=editId;S.pendingPhotos=[];
-  $('boxModalTitle').textContent=editId?'Edit Box':'New Box';
-  buildTagPicker(editId?(getBox(editId)?.tags||[]):[]);
-  if(editId){const b=getBox(editId);$('f-id').value=b.boxId||'';$('f-desc').value=b.description||'';populateLocationSelect(b.location||'');S.pendingPhotos=(b.photos||[]).map(p=>({id:uid(),url:p.url,driveId:p.driveId||null}));}
-  else{$('f-id').value='';$('f-desc').value='';populateLocationSelect('');}
-  renderPreviews(); openModal('modal-box');
-}
-async function saveBox(){
-  const boxId=$('f-id').value.trim(),loc=$('f-location').value,desc=$('f-desc').value.trim(),tags=getSelectedTags();
-  if(!boxId){shake('f-id');toast('Box ID required','err');return;}
-  if(!loc){toast('Please select a location — add one in the Locations tab first','err');return;}
-  const dup=S.boxes.find(b=>b.boxId.toLowerCase()===boxId.toLowerCase()&&b.id!==S.editBoxId);
-  if(dup){shake('f-id');toast('Box ID already exists','err');return;}
-  const photos=await uploadPhotos();
-  if(S.editBoxId){const b=getBox(S.editBoxId);Object.assign(b,{boxId,location:loc,description:desc,tags,photos});}
-  else{S.boxes.push({id:uid(),boxId,location:loc,description:desc,tags,photos,items:[],createdAt:new Date().toISOString()});}
-  persist();closeModal('modal-box');renderBoxList();
-  if(S.editBoxId&&S.currentId===S.editBoxId){$('detailLabel').textContent=`BOX #${boxId}`;renderDetail(getBox(S.editBoxId));}
-  toast(S.editBoxId?'Box updated ✓':'Box saved ✓','ok');S.editBoxId=null;
-}
-function deleteBox(){
-  const b=getBox(S.currentId);if(!b) return;
-  if(!confirm(`Delete Box #${b.boxId}? Cannot be undone.`)) return;
-  S.boxes=S.boxes.filter(x=>x.id!==S.currentId);
-  persist();goTo('boxes');renderBoxList();toast('Box deleted');
+  const s = $('f-location');
+  s.innerHTML = '<option value="">— Select a location —</option>';
+  S.locations.forEach(l => {
+    const o = document.createElement('option');
+    o.value = l.name; o.textContent = l.name;
+    if(l.name === sel) o.selected = true;
+    s.appendChild(o);
+  });
+  if(sel && !S.locations.find(l => l.name===sel)){
+    const o = document.createElement('option');
+    o.value = sel; o.textContent = sel+' (unlisted)'; o.selected = true;
+    s.appendChild(o);
+  }
 }
 
+function openBoxModal(editId=null){
+  S.editBoxId     = editId;
+  S.pendingPhotos = [];
+  $('boxModalTitle').textContent = editId ? 'Edit Box' : 'New Box';
+  buildTagPicker(editId ? (getBox(editId)?.tags||[]) : []);
+  if(editId){
+    const b = getBox(editId);
+    $('f-id').value   = b.boxId       || '';
+    $('f-desc').value = b.description || '';
+    populateLocationSelect(b.location || '');
+    S.pendingPhotos   = (b.photos||[]).map(p => ({ id:uid(), url:p.url, storageRef:p.storageRef||null }));
+  }else{
+    $('f-id').value = $('f-desc').value = '';
+    populateLocationSelect('');
+  }
+  renderPreviews();
+  openModal('modal-box');
+}
+
+async function saveBox(){
+  const boxId = $('f-id').value.trim();
+  const loc   = $('f-location').value;
+  const desc  = $('f-desc').value.trim();
+  const tags  = getSelectedTags();
+
+  if(!boxId){ shake('f-id'); toast('Box ID required','err'); return; }
+  if(!loc)  { toast('Please select a location — add one in the Locations tab first','err'); return; }
+
+  const dup = S.boxes.find(b => b.boxId.toLowerCase()===boxId.toLowerCase() && b.id!==S.editBoxId);
+  if(dup){ shake('f-id'); toast('Box ID already exists','err'); return; }
+
+  const photos = await uploadPhotos();
+
+  if(S.editBoxId){
+    const b = getBox(S.editBoxId);
+    Object.assign(b, { boxId, location:loc, description:desc, tags, photos });
+  }else{
+    S.boxes.push({ id:uid(), boxId, location:loc, description:desc, tags, photos, items:[], createdAt:new Date().toISOString() });
+  }
+
+  persist();
+  closeModal('modal-box');
+  renderBoxList();
+  if(S.editBoxId && S.currentId===S.editBoxId){
+    $('detailLabel').textContent = `BOX #${boxId}`;
+    renderDetail(getBox(S.editBoxId));
+  }
+  toast(S.editBoxId ? 'Box updated ✓' : 'Box saved ✓', 'ok');
+  S.editBoxId = null;
+}
+
+function deleteBox(){
+  const b = getBox(S.currentId); if(!b) return;
+  if(!confirm(`Delete Box #${b.boxId}? Cannot be undone.`)) return;
+  S.boxes = S.boxes.filter(x => x.id !== S.currentId);
+  persist();
+  goTo('boxes');
+  renderBoxList();
+  toast('Box deleted');
+}
+
+/* ── Item CRUD ── */
 function openItemModal(editId=null){
-  S.editItemId=editId;$('itemModalTitle').textContent=editId?'Edit Item':'Add Item';
-  if(editId){const it=(getBox(S.currentId)?.items||[]).find(i=>i.id===editId);$('f-itemName').value=it?.name||'';$('f-itemQty').value=it?.qty||'';$('f-itemNotes').value=it?.notes||'';}
-  else{$('f-itemName').value='';$('f-itemQty').value='';$('f-itemNotes').value='';}
+  S.editItemId = editId;
+  $('itemModalTitle').textContent = editId ? 'Edit Item' : 'Add Item';
+  if(editId){
+    const it = (getBox(S.currentId)?.items||[]).find(i => i.id===editId);
+    $('f-itemName').value  = it?.name  || '';
+    $('f-itemQty').value   = it?.qty   || '';
+    $('f-itemNotes').value = it?.notes || '';
+  }else{
+    $('f-itemName').value = $('f-itemQty').value = $('f-itemNotes').value = '';
+  }
   openModal('modal-item');
 }
+
 function saveItem(){
-  const name=$('f-itemName').value.trim(),qty=parseInt($('f-itemQty').value)||1,notes=$('f-itemNotes').value.trim();
-  if(!name){shake('f-itemName');toast('Item name required','err');return;}
-  const box=getBox(S.currentId);if(!box) return;
-  if(!box.items)box.items=[];
-  if(S.editItemId){const it=box.items.find(i=>i.id===S.editItemId);if(it)Object.assign(it,{name,qty,notes});}
-  else{box.items.push({id:uid(),name,qty,notes});}
-  persist();closeModal('modal-item');renderDetail(box);
-  toast(S.editItemId?'Item updated ✓':'Item added ✓','ok');S.editItemId=null;
-}
-function deleteItem(iid){
-  const box=getBox(S.currentId);if(!box) return;
-  box.items=(box.items||[]).filter(i=>i.id!==iid);
-  persist();renderDetail(box);toast('Item removed');
+  const name  = $('f-itemName').value.trim();
+  const qty   = parseInt($('f-itemQty').value) || 1;
+  const notes = $('f-itemNotes').value.trim();
+  if(!name){ shake('f-itemName'); toast('Item name required','err'); return; }
+  const box = getBox(S.currentId); if(!box) return;
+  if(!box.items) box.items = [];
+  if(S.editItemId){
+    const it = box.items.find(i => i.id===S.editItemId);
+    if(it) Object.assign(it, { name, qty, notes });
+  }else{
+    box.items.push({ id:uid(), name, qty, notes });
+  }
+  persist();
+  closeModal('modal-item');
+  renderDetail(box);
+  toast(S.editItemId ? 'Item updated ✓' : 'Item added ✓', 'ok');
+  S.editItemId = null;
 }
 
+function deleteItem(iid){
+  const box = getBox(S.currentId); if(!box) return;
+  box.items = (box.items||[]).filter(i => i.id !== iid);
+  persist();
+  renderDetail(box);
+  toast('Item removed');
+}
+
+/* ── Location CRUD ── */
 function renderLocationList(){
-  const el=$('locationList');if(!el) return;
+  const el = $('locationList'); if(!el) return;
   if(!S.locations.length){
-    el.innerHTML=`<div class="empty"><div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="empty-title">No locations yet</div><p class="empty-sub">Add locations like Garage, Basement or Storage Room to organise your boxes.</p></div>`;
+    el.innerHTML = `<div class="empty">
+      <div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="empty-title">No locations yet</div>
+      <p class="empty-sub">Add locations like Garage, Basement or Storage Room to organise your boxes.</p>
+    </div>`;
     return;
   }
-  el.innerHTML=S.locations.map((loc,i)=>{
-    const count=S.boxes.filter(b=>b.location===loc.name).length;
-    return `<div class="loc-card"><div class="loc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="loc-body"><div class="loc-name">${esc(loc.name)}</div><div class="loc-sub">${loc.notes?esc(loc.notes):`${count} box${count!==1?'es':''}`}</div></div><div class="loc-actions"><button class="loc-btn" data-edit="${loc.id}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="loc-btn del" data-del="${loc.id}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg></button></div></div>`;
+  el.innerHTML = S.locations.map(loc => {
+    const count = S.boxes.filter(b => b.location===loc.name).length;
+    return `<div class="loc-card">
+      <div class="loc-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="loc-body">
+        <div class="loc-name">${esc(loc.name)}</div>
+        <div class="loc-sub">${loc.notes ? esc(loc.notes) : `${count} box${count!==1?'es':''}`}</div>
+      </div>
+      <div class="loc-actions">
+        <button class="loc-btn" data-edit="${loc.id}" aria-label="Edit">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="loc-btn del" data-del="${loc.id}" aria-label="Delete">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>`;
   }).join('');
-  el.querySelectorAll('.loc-btn[data-edit]').forEach(b=>b.addEventListener('click',()=>openLocModal(b.dataset.edit)));
-  el.querySelectorAll('.loc-btn[data-del]').forEach(b=>b.addEventListener('click',()=>deleteLocation(b.dataset.del)));
+  el.querySelectorAll('.loc-btn[data-edit]').forEach(b => b.addEventListener('click', () => openLocModal(b.dataset.edit)));
+  el.querySelectorAll('.loc-btn[data-del]') .forEach(b => b.addEventListener('click', () => deleteLocation(b.dataset.del)));
 }
+
 function openLocModal(editId=null){
-  S.editLocId=editId;$('locModalTitle').textContent=editId?'Edit Location':'New Location';
-  if(editId){const loc=S.locations.find(l=>l.id===editId);$('f-locName').value=loc?.name||'';$('f-locNotes').value=loc?.notes||'';}
-  else{$('f-locName').value='';$('f-locNotes').value='';}
+  S.editLocId = editId;
+  $('locModalTitle').textContent = editId ? 'Edit Location' : 'New Location';
+  if(editId){
+    const loc = S.locations.find(l => l.id===editId);
+    $('f-locName').value  = loc?.name  || '';
+    $('f-locNotes').value = loc?.notes || '';
+  }else{
+    $('f-locName').value = $('f-locNotes').value = '';
+  }
   openModal('modal-location');
 }
+
 function saveLoc(){
-  const name=$('f-locName').value.trim(),notes=$('f-locNotes').value.trim();
-  if(!name){shake('f-locName');toast('Location name required','err');return;}
-  const dup=S.locations.find(l=>l.name.toLowerCase()===name.toLowerCase()&&l.id!==S.editLocId);
-  if(dup){shake('f-locName');toast('Location already exists','err');return;}
-  if(S.editLocId){const loc=S.locations.find(l=>l.id===S.editLocId);if(loc){S.boxes.forEach(b=>{if(b.location===loc.name)b.location=name;});loc.name=name;loc.notes=notes;}}
-  else{S.locations.push({id:uid(),name,notes});}
-  persist();closeModal('modal-location');renderLocationList();renderLocChips();
-  toast(S.editLocId?'Location updated ✓':'Location added ✓','ok');S.editLocId=null;
+  const name  = $('f-locName').value.trim();
+  const notes = $('f-locNotes').value.trim();
+  if(!name){ shake('f-locName'); toast('Location name required','err'); return; }
+  const dup = S.locations.find(l => l.name.toLowerCase()===name.toLowerCase() && l.id!==S.editLocId);
+  if(dup){ shake('f-locName'); toast('Location already exists','err'); return; }
+  if(S.editLocId){
+    const loc = S.locations.find(l => l.id===S.editLocId);
+    if(loc){
+      S.boxes.forEach(b => { if(b.location===loc.name) b.location=name; });
+      loc.name=name; loc.notes=notes;
+    }
+  }else{
+    S.locations.push({ id:uid(), name, notes });
+  }
+  persist();
+  closeModal('modal-location');
+  renderLocationList();
+  renderLocChips();
+  toast(S.editLocId ? 'Location updated ✓' : 'Location added ✓', 'ok');
+  S.editLocId = null;
 }
+
 function deleteLocation(locId){
-  const loc=S.locations.find(l=>l.id===locId);if(!loc) return;
-  const used=S.boxes.filter(b=>b.location===loc.name).length;
-  if(used>0&&!confirm(`"${loc.name}" is used by ${used} box${used!==1?'es':''}. Delete anyway?`)) return;
-  S.locations=S.locations.filter(l=>l.id!==locId);
-  persist();renderLocationList();renderLocChips();toast('Location deleted');
+  const loc = S.locations.find(l => l.id===locId); if(!loc) return;
+  const used = S.boxes.filter(b => b.location===loc.name).length;
+  if(used>0 && !confirm(`"${loc.name}" is used by ${used} box${used!==1?'es':''}. Delete anyway?`)) return;
+  S.locations = S.locations.filter(l => l.id!==locId);
+  persist();
+  renderLocationList();
+  renderLocChips();
+  toast('Location deleted');
 }
 
+/* ── Tag picker ── */
 function buildTagPicker(sel=[]){
-  const custom=[...new Set(S.boxes.flatMap(b=>b.tags||[]))].filter(t=>!DEFAULT_TAGS.includes(t));
-  $('tagPicker').innerHTML=[...DEFAULT_TAGS,...custom].map(t=>`<button type="button" class="tag-opt${sel.includes(t)?' on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('');
-  $('tagPicker').querySelectorAll('.tag-opt').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+  const custom = [...new Set(S.boxes.flatMap(b => b.tags||[]))].filter(t => !DEFAULT_TAGS.includes(t));
+  $('tagPicker').innerHTML = [...DEFAULT_TAGS, ...custom].map(t =>
+    `<button type="button" class="tag-opt${sel.includes(t)?' on':''}" data-tag="${esc(t)}">${esc(t)}</button>`
+  ).join('');
+  $('tagPicker').querySelectorAll('.tag-opt').forEach(b => b.addEventListener('click', () => b.classList.toggle('on')));
 }
-function getSelectedTags(){return[...$('tagPicker').querySelectorAll('.tag-opt.on')].map(b=>b.dataset.tag);}
+function getSelectedTags(){ return [...$('tagPicker').querySelectorAll('.tag-opt.on')].map(b => b.dataset.tag); }
 
+/* ── Photo previews ── */
 function renderPreviews(){
-  const g=$('photoGridNew');
-  g.innerHTML=S.pendingPhotos.map(p=>`<div class="prev-item"><img src="${esc(p.url||p.dataUrl)}" loading="lazy" alt=""/><button class="prev-rm" data-pid="${p.id}">✕</button></div>`).join('');
-  g.querySelectorAll('.prev-rm').forEach(b=>b.addEventListener('click',()=>{S.pendingPhotos=S.pendingPhotos.filter(p=>p.id!==b.dataset.pid);renderPreviews();}));
+  const g = $('photoGridNew');
+  g.innerHTML = S.pendingPhotos.map(p => `
+    <div class="prev-item">
+      <img src="${esc(p.url||p.dataUrl)}" loading="lazy" alt=""/>
+      <button class="prev-rm" data-pid="${p.id}">✕</button>
+    </div>`).join('');
+  g.querySelectorAll('.prev-rm').forEach(b => b.addEventListener('click', () => {
+    S.pendingPhotos = S.pendingPhotos.filter(p => p.id !== b.dataset.pid);
+    renderPreviews();
+  }));
 }
+
 function handleFiles(files){
-  [...files].forEach(file=>{const r=new FileReader();r.onload=e=>{S.pendingPhotos.push({id:uid(),dataUrl:e.target.result,file,url:e.target.result});renderPreviews();};r.readAsDataURL(file);});
-}
-async function driveRequest(url, opts={}){
-  let token=S.gToken;
-  let res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
-  if(res.status===401){
-    try{ token=await refreshToken(); }
-    catch(e){ throw new Error('Session expired — tap Reconnect in Settings'); }
-    res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
-  }
-  return res;
-}
-
-async function uploadPhotos(){
-  const already=S.pendingPhotos.filter(p=>!p.file||p.driveId);
-  const toUp=S.pendingPhotos.filter(p=>p.file&&!p.driveId);
-  const results=already.map(p=>({url:p.url,driveId:p.driveId||null}));
-  if(!toUp.length) return results;
-  if(!S.gToken){
-    toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));
-    toast('Photos saved locally (sign in to back up to Drive)');
-    return results;
-  }
-  const folderId=localStorage.getItem(LS.FOLDER);
-  if(!folderId){
-    toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));
-    toast('No Drive folder set — photos saved locally','err');
-    return results;
-  }
-  showBar(true);
-  let uploadedCount=0;
-  for(let i=0;i<toUp.length;i++){
-    setBar((i/toUp.length)*90);
-    const p=toUp[i];
-    try{
-      // Step 1: upload file
-      const form=new FormData();
-      form.append('metadata',new Blob([JSON.stringify({
-        name:`bb_${Date.now()}_${p.file.name}`,
-        parents:[folderId]
-      })],{type:'application/json'}));
-      form.append('file',p.file);
-      const uploadRes=await driveRequest(
-        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
-        {method:'POST',body:form}
-      );
-      if(!uploadRes.ok){
-        const errBody=await uploadRes.json().catch(()=>({}));
-        throw new Error(`Upload ${uploadRes.status}: ${errBody?.error?.message||'unknown'}`);
-      }
-      const d=await uploadRes.json();
-      // Step 2: make file publicly readable
-      const permRes=await driveRequest(
-        `https://www.googleapis.com/drive/v3/files/${d.id}/permissions`,
-        {method:'POST',headers:{'Content-Type':'application/json'},
-         body:JSON.stringify({role:'reader',type:'anyone'})}
-      );
-      if(!permRes.ok){
-        const errBody=await permRes.json().catch(()=>({}));
-        throw new Error(`Permission ${permRes.status}: ${errBody?.error?.message||'unknown'}`);
-      }
-      results.push({url:`https://drive.google.com/thumbnail?id=${d.id}&sz=w800`,driveId:d.id});
-      uploadedCount++;
-    }catch(e){
-      console.error('Photo upload failed:',e.message);
-      toast(`Photo upload failed: ${e.message}`,'err');
-      results.push({url:p.dataUrl,driveId:null});
-    }
-  }
-  setBar(100);setTimeout(()=>showBar(false),600);
-  if(uploadedCount>0) toast(`${uploadedCount} photo${uploadedCount!==1?'s':''} uploaded to Drive ✓`,'ok');
-  return results;
-}
-function showBar(show){$('uploadBar').classList.toggle('hidden',!show);if(show)$('uploadFill').style.width='0%';}
-function setBar(pct){$('uploadFill').style.width=pct+'%';}
-
-let _syncTimer=null;
-function scheduleSync(){clearTimeout(_syncTimer);_syncTimer=setTimeout(syncToSheet,4000);}
-
-/* Request a fresh token silently (no popup if possible) */
-function refreshToken(){
-  return new Promise((resolve,reject)=>{
-    if(!S.gTokenClient){reject(new Error('Not initialised'));return;}
-    // Override callback temporarily to capture new token
-    const prev=S.gTokenClient.callback;
-    S.gTokenClient.callback=resp=>{
-      S.gTokenClient.callback=prev;
-      if(resp.error){reject(new Error(resp.error));return;}
-      S.gToken=resp.access_token;
-      localStorage.setItem(LS.GTOKEN,S.gToken);
-      resolve(S.gToken);
+  [...files].forEach(file => {
+    const r = new FileReader();
+    r.onload = e => {
+      S.pendingPhotos.push({ id:uid(), dataUrl:e.target.result, file, url:e.target.result });
+      renderPreviews();
     };
-    // prompt:'' means silent refresh if session still valid
-    S.gTokenClient.requestAccessToken({prompt:''});
+    r.readAsDataURL(file);
   });
 }
 
-async function sheetsRequest(url, opts={}){
-  let token=S.gToken;
-  let res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
-  if(res.status===401){
-    // Token expired — try silent refresh
-    try{ token=await refreshToken(); }
-    catch(e){ throw new Error('Session expired — tap Reconnect in Settings'); }
-    res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
-  }
-  return res;
-}
-
-function updateSyncUI(){
-  const ok=!!S.gToken;
-  const ss=$('syncStatus');if(ss){ss.className='drive-status '+(ok?'online':'offline');$('syncStatusText').textContent=ok?'Connected — auto-syncing':'Not connected';}
-  const sb=$('syncBar');if(sb){sb.classList.toggle('hidden',!ok);if(ok)setSyncBar('saving','Waiting for first sync…');}
-  if($('saveConnectBtn'))$('saveConnectBtn').style.display=ok?'none':'';
-  if($('reconnectBtn'))$('reconnectBtn').style.display=ok?'':'none';
-  if($('syncNowBtn'))$('syncNowBtn').style.display=ok?'':'none';
-  if($('disconnectBtn'))$('disconnectBtn').style.display=ok?'':'none';
-}
-function setSyncBar(cls,text){const sb=$('syncBar');if(!sb)return;sb.className='sync-bar '+cls;$('syncText').textContent=text;}
-
-async function syncToSheet(){
-  const sheetId=localStorage.getItem(LS.SHEET);
-  if(!S.gToken||!sheetId)return;
-  setSyncBar('saving','Saving…');
-  try{
-    const payload={boxes:S.boxes,locations:S.locations};
-    const res=await sheetsRequest(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1?valueInputOption=RAW`,
-      {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:[[JSON.stringify(payload)]]})});
-    if(!res.ok){
-      const err=await res.json().catch(()=>({error:{message:res.status}}));
-      throw new Error(err?.error?.message||res.status);
-    }
-    setSyncBar('synced','Synced · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
-  }catch(e){
-    setSyncBar('error','Sync error');
-    toast('Sync failed: '+e.message,'err');
-  }
-}
-
-async function syncFromSheet(){
-  const sheetId=localStorage.getItem(LS.SHEET);
-  if(!S.gToken||!sheetId)return;
-  setSyncBar('saving','Loading…');
-  try{
-    const res=await sheetsRequest(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1`);
-    if(!res.ok)throw new Error(res.status);
-    const d=await res.json();const raw=d.values?.[0]?.[0];if(!raw)return;
-    const loaded=JSON.parse(raw);
-    if(loaded.boxes&&Array.isArray(loaded.boxes)){S.boxes=loaded.boxes;localStorage.setItem(LS.BOXES,JSON.stringify(S.boxes));}
-    if(loaded.locations&&Array.isArray(loaded.locations)){S.locations=loaded.locations;localStorage.setItem(LS.LOCS,JSON.stringify(S.locations));}
-    renderBoxList();renderLocationList();toast('Data loaded from Sheet ✓','ok');setSyncBar('synced','Synced');
-  }catch(e){setSyncBar('error','Sync error');}
-}
-
-function loadGIS(){return new Promise((res,rej)=>{if(window.google?.accounts?.oauth2){res();return;}const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
-async function initGoogleAuth(cid){
-  await loadGIS();
-  S.gTokenClient=window.google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',callback:async resp=>{
-    if(resp.error){toast('Sign-in failed: '+resp.error,'err');return;}
-    S.gToken=resp.access_token;localStorage.setItem(LS.GTOKEN,S.gToken);
-    setTimeout(()=>{S.gToken=null;localStorage.removeItem(LS.GTOKEN);updateSyncUI();toast('Session expired — reconnect in Settings');},(((resp.expires_in||3600)-60)*1000));
-    updateSyncUI();toast('Signed in ✓','ok');await syncFromSheet();
-  }});
-}
-
+/* ── Search ── */
 function doSearch(q){
-  q=q.trim().toLowerCase();const drop=$('searchDrop'),clr=$('searchClear');
-  clr.classList.toggle('hidden',!q);
-  if(!q){drop.classList.add('hidden');return;}
-  const hits=[];
-  S.boxes.forEach(box=>{
-    [[`BOX #${box.boxId}`,box.location],[box.description,null],...(box.tags||[]).map(t=>[t,`Tag in BOX #${box.boxId}`]),...(box.items||[]).map(it=>[it.name,`Item in BOX #${box.boxId}`+(it.notes?' · '+it.notes:'')])].filter(f=>f[0]).forEach(([txt,sub])=>{if(txt.toLowerCase().includes(q))hits.push({bid:box.id,bid2:box.boxId,txt,sub});});
+  q = q.trim().toLowerCase();
+  const drop = $('searchDrop'), clr = $('searchClear');
+  clr.classList.toggle('hidden', !q);
+  if(!q){ drop.classList.add('hidden'); return; }
+
+  const hits = [];
+  S.boxes.forEach(box => {
+    const pairs = [
+      [`BOX #${box.boxId}`, box.location],
+      [box.description,    null],
+      ...(box.tags||[]).map(t    => [t,       `Tag in BOX #${box.boxId}`]),
+      ...(box.items||[]).map(it  => [it.name, `Item in BOX #${box.boxId}`+(it.notes?' · '+it.notes:'')]),
+    ].filter(f => f[0]);
+    pairs.forEach(([txt,sub]) => {
+      if(txt.toLowerCase().includes(q)) hits.push({ bid:box.id, bid2:box.boxId, txt, sub });
+    });
   });
-  if(!hits.length){drop.innerHTML=`<div style="padding:20px 16px;text-align:center;color:var(--t3);font-size:14px">No results for "<strong>${esc(q)}</strong>"</div>`;drop.classList.remove('hidden');return;}
-  const re=new RegExp(`(${escRe(q)})`,'gi');
-  const uniq=[...new Map(hits.map(h=>[h.bid+h.txt,h])).values()].slice(0,12);
-  drop.innerHTML=uniq.map(h=>`<div class="sr" data-id="${h.bid}"><span class="sr-id">#${esc(h.bid2)}</span><div><div class="sr-text">${esc(h.txt).replace(re,'<mark>$1</mark>')}</div>${h.sub?`<div class="sr-sub">${esc(h.sub)}</div>`:''}</div></div>`).join('');
+
+  if(!hits.length){
+    drop.innerHTML = `<div style="padding:20px 16px;text-align:center;color:var(--t3);font-size:14px">No results for "<strong>${esc(q)}</strong>"</div>`;
+    drop.classList.remove('hidden');
+    return;
+  }
+
+  const re   = new RegExp(`(${escRe(q)})`, 'gi');
+  const uniq = [...new Map(hits.map(h => [h.bid+h.txt, h])).values()].slice(0,12);
+  drop.innerHTML = uniq.map(h => `
+    <div class="sr" data-id="${h.bid}">
+      <span class="sr-id">#${esc(h.bid2)}</span>
+      <div>
+        <div class="sr-text">${esc(h.txt).replace(re,'<mark>$1</mark>')}</div>
+        ${h.sub ? `<div class="sr-sub">${esc(h.sub)}</div>` : ''}
+      </div>
+    </div>`).join('');
   drop.classList.remove('hidden');
-  drop.querySelectorAll('.sr').forEach(r=>r.addEventListener('click',()=>{$('searchInput').value='';drop.classList.add('hidden');clr.classList.add('hidden');openDetail(r.dataset.id);}));
+  drop.querySelectorAll('.sr').forEach(r => r.addEventListener('click', () => {
+    $('searchInput').value = '';
+    drop.classList.add('hidden');
+    clr.classList.add('hidden');
+    openDetail(r.dataset.id);
+  }));
 }
 
-function openLightbox(){$('lightbox').classList.remove('hidden');renderLb();}
-function renderLb(){const p=S.lbPhotos,i=S.lbIdx;$('lbImg').src=p[i];$('lbCtr').textContent=`${i+1} / ${p.length}`;$('lbPrev').style.display=p.length>1?'':'none';$('lbNext').style.display=p.length>1?'':'none';}
-function closeLightbox(){$('lightbox').classList.add('hidden');}
-function openModal(id){$(id).classList.add('open');document.body.style.overflow='hidden';}
-function closeModal(id){$(id).classList.remove('open');document.body.style.overflow='';}
-function shake(id){const el=$(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}
+/* ── Lightbox ── */
+function openLightbox(){ $('lightbox').classList.remove('hidden'); renderLb(); }
+function closeLightbox(){ $('lightbox').classList.add('hidden'); }
+function renderLb(){
+  const p = S.lbPhotos, i = S.lbIdx;
+  $('lbImg').src            = p[i];
+  $('lbCtr').textContent    = `${i+1} / ${p.length}`;
+  $('lbPrev').style.display = p.length>1 ? '' : 'none';
+  $('lbNext').style.display = p.length>1 ? '' : 'none';
+}
+
+/* ── Modals ── */
+function openModal(id) { $(id).classList.add('open');    document.body.style.overflow='hidden'; }
+function closeModal(id){ $(id).classList.remove('open'); document.body.style.overflow=''; }
+
+/* ── Shake ── */
+function shake(id){
+  const el=$(id); if(!el) return;
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+  setTimeout(()=>el.classList.remove('shake'), 400);
+}
+
+/* ── Export ── */
 function exportJSON(){
-  const blob=new Blob([JSON.stringify({boxes:S.boxes,locations:S.locations,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`blackbox-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('Exported ✓','ok');
+  const data = { boxes:S.boxes, locations:S.locations, exportedAt:new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`blackbox-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Exported ✓','ok');
 }
 
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
 function init(){
-  load();renderBoxList();renderLocationList();
+  load();
+  renderBoxList();
+  renderLocationList();
 
-  document.querySelectorAll('.nav-tab[data-view]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.view)));
-  $('filterTabTags').addEventListener('click',()=>{setFilterTab('tags');renderBoxList();});
-  $('filterTabLocs').addEventListener('click',()=>{setFilterTab('locs');renderBoxList();});
+  /* Nav */
+  document.querySelectorAll('.nav-tab[data-view]').forEach(b =>
+    b.addEventListener('click', () => goTo(b.dataset.view))
+  );
 
-  $('openAddBox').addEventListener('click',()=>openBoxModal());
-  $('backBtn').addEventListener('click',()=>goTo('boxes'));
-  $('editBoxBtn').addEventListener('click',()=>S.currentId&&openBoxModal(S.currentId));
-  $('deleteBoxBtn').addEventListener('click',deleteBox);
+  /* Filter tabs */
+  $('filterTabTags').addEventListener('click', () => { setFilterTab('tags'); renderBoxList(); });
+  $('filterTabLocs').addEventListener('click', () => { setFilterTab('locs'); renderBoxList(); });
 
-  $('saveBoxBtn').addEventListener('click',saveBox);
-  $('cancelBoxBtn').addEventListener('click',()=>closeModal('modal-box'));
-  $('photoFileInput').addEventListener('change',e=>{handleFiles(e.target.files);e.target.value='';});
-  $('addCustomTagBtn').addEventListener('click',()=>{const v=$('customTagInput').value.trim();if(!v)return;const b=document.createElement('button');b.type='button';b.className='tag-opt on';b.dataset.tag=v;b.textContent=v;b.addEventListener('click',()=>b.classList.toggle('on'));$('tagPicker').appendChild(b);$('customTagInput').value='';});
-  $('customTagInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('addCustomTagBtn').click();}});
+  /* Boxes view */
+  $('openAddBox').addEventListener('click', () => openBoxModal());
+  $('backBtn')   .addEventListener('click', () => { goTo('boxes'); renderBoxList(); });
+  $('editBoxBtn').addEventListener('click', () => S.currentId && openBoxModal(S.currentId));
+  $('deleteBoxBtn').addEventListener('click', deleteBox);
 
-  $('saveItemBtn').addEventListener('click',saveItem);
-  $('cancelItemBtn').addEventListener('click',()=>closeModal('modal-item'));
-  $('f-itemName').addEventListener('keydown',e=>{if(e.key==='Enter')$('saveItemBtn').click();});
-
-  $('openAddLocation').addEventListener('click',()=>openLocModal());
-  $('saveLocBtn').addEventListener('click',saveLoc);
-  $('cancelLocBtn').addEventListener('click',()=>closeModal('modal-location'));
-  $('f-locName').addEventListener('keydown',e=>{if(e.key==='Enter')$('saveLocBtn').click();});
-
-  $('searchInput').addEventListener('input',e=>doSearch(e.target.value));
-  $('searchClear').addEventListener('click',()=>{$('searchInput').value='';$('searchDrop').classList.add('hidden');$('searchClear').classList.add('hidden');});
-  document.addEventListener('click',e=>{if(!e.target.closest('#searchDrop')&&!e.target.closest('.search-bar'))$('searchDrop').classList.add('hidden');});
-
-  $('lbClose').addEventListener('click',closeLightbox);$('lbBg').addEventListener('click',closeLightbox);
-  $('lbPrev').addEventListener('click',()=>{S.lbIdx=(S.lbIdx-1+S.lbPhotos.length)%S.lbPhotos.length;renderLb();});
-  $('lbNext').addEventListener('click',()=>{S.lbIdx=(S.lbIdx+1)%S.lbPhotos.length;renderLb();});
-  document.addEventListener('keydown',e=>{if($('lightbox').classList.contains('hidden'))return;if(e.key==='ArrowLeft')$('lbPrev').click();if(e.key==='ArrowRight')$('lbNext').click();if(e.key==='Escape')closeLightbox();});
-
-  document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)closeModal(bg.id);}));
-
-  $('saveConnectBtn').addEventListener('click',async()=>{
-    const cid=$('gClientId').value.trim(),sid=$('gSheetId').value.trim(),fid=$('gFolderId').value.trim();
-    if(!cid){toast('Client ID is required','err');return;}if(!sid){toast('Sheet ID is required','err');return;}
-    localStorage.setItem(LS.GCID,cid);localStorage.setItem(LS.SHEET,sid);if(fid)localStorage.setItem(LS.FOLDER,fid);
-    try{await initGoogleAuth(cid);S.gTokenClient.requestAccessToken();}catch(e){toast('Failed to load Google Sign-In','err');}
+  /* Box modal */
+  $('saveBoxBtn')  .addEventListener('click', saveBox);
+  $('cancelBoxBtn').addEventListener('click', () => closeModal('modal-box'));
+  $('photoFileInput').addEventListener('change', e => { handleFiles(e.target.files); e.target.value=''; });
+  $('addCustomTagBtn').addEventListener('click', () => {
+    const v = $('customTagInput').value.trim(); if(!v) return;
+    const b = document.createElement('button');
+    b.type='button'; b.className='tag-opt on'; b.dataset.tag=v; b.textContent=v;
+    b.addEventListener('click', () => b.classList.toggle('on'));
+    $('tagPicker').appendChild(b);
+    $('customTagInput').value='';
   });
-  const sn=$('syncNowBtn');if(sn)sn.addEventListener('click',async()=>{await syncFromSheet();await syncToSheet();});
-  const rb=$('reconnectBtn');if(rb)rb.addEventListener('click',()=>{if(S.gTokenClient)S.gTokenClient.requestAccessToken({prompt:'',hint:''});else toast('Save settings first','err');});
-  $('disconnectBtn').addEventListener('click',()=>{S.gToken=null;localStorage.removeItem(LS.GTOKEN);updateSyncUI();toast('Disconnected');});
-  $('exportBtn').addEventListener('click',exportJSON);
-  $('clearDataBtn').addEventListener('click',()=>{if(!confirm('Delete ALL data? Cannot be undone.'))return;S.boxes=[];S.locations=[];persist();renderBoxList();renderLocationList();toast('All data cleared');});
+  $('customTagInput').addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); $('addCustomTagBtn').click(); } });
 
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  const savedCid=localStorage.getItem(LS.GCID);
-  if(savedCid&&!S.gToken){loadGIS().then(()=>initGoogleAuth(savedCid)).catch(()=>{});}
+  /* Item modal */
+  $('saveItemBtn')  .addEventListener('click', saveItem);
+  $('cancelItemBtn').addEventListener('click', () => closeModal('modal-item'));
+  $('f-itemName')   .addEventListener('keydown', e => { if(e.key==='Enter') $('saveItemBtn').click(); });
+
+  /* Location view + modal */
+  $('openAddLocation').addEventListener('click', () => openLocModal());
+  $('saveLocBtn')     .addEventListener('click', saveLoc);
+  $('cancelLocBtn')   .addEventListener('click', () => closeModal('modal-location'));
+  $('f-locName')      .addEventListener('keydown', e => { if(e.key==='Enter') $('saveLocBtn').click(); });
+
+  /* Search */
+  $('searchInput').addEventListener('input', e => doSearch(e.target.value));
+  $('searchClear').addEventListener('click', () => {
+    $('searchInput').value='';
+    $('searchDrop').classList.add('hidden');
+    $('searchClear').classList.add('hidden');
+  });
+  document.addEventListener('click', e => {
+    if(!e.target.closest('#searchDrop') && !e.target.closest('.search-bar'))
+      $('searchDrop').classList.add('hidden');
+  });
+
+  /* Lightbox */
+  $('lbClose').addEventListener('click', closeLightbox);
+  $('lbBg')   .addEventListener('click', closeLightbox);
+  $('lbPrev') .addEventListener('click', () => { S.lbIdx=(S.lbIdx-1+S.lbPhotos.length)%S.lbPhotos.length; renderLb(); });
+  $('lbNext') .addEventListener('click', () => { S.lbIdx=(S.lbIdx+1)%S.lbPhotos.length; renderLb(); });
+  document.addEventListener('keydown', e => {
+    if($('lightbox').classList.contains('hidden')) return;
+    if(e.key==='ArrowLeft')  $('lbPrev').click();
+    if(e.key==='ArrowRight') $('lbNext').click();
+    if(e.key==='Escape')     closeLightbox();
+  });
+
+  /* Modal backdrop tap-to-close */
+  document.querySelectorAll('.modal-bg').forEach(bg =>
+    bg.addEventListener('click', e => { if(e.target===bg) closeModal(bg.id); })
+  );
+
+  /* Firebase settings */
+  $('saveFirebaseBtn').addEventListener('click', async () => {
+    const raw = $('fbConfig').value.trim();
+    if(!raw){ toast('Paste your Firebase config JSON first','err'); return; }
+    try{ JSON.parse(raw); }catch(e){ toast('Invalid JSON — check the config format','err'); return; }
+    localStorage.setItem(LS.FB_CFG, raw);
+    toast('Connecting to Firebase…');
+    const ok = await initFirebase();
+    if(ok){
+      updateSyncUI();
+      setSyncBar('saving','Connecting…');
+      await pullData();
+      startLiveSync();
+      toast('Connected to Firebase ✓','ok');
+    }
+  });
+
+  $('syncNowBtn').addEventListener('click', async () => {
+    await pullData();
+    await pushData();
+  });
+
+  $('disconnectBtn').addEventListener('click', () => {
+    if(_unsubscribe){ _unsubscribe(); _unsubscribe=null; }
+    FB.ready = false;
+    localStorage.removeItem(LS.FB_CFG);
+    if($('fbConfig')) $('fbConfig').value='';
+    updateSyncUI();
+    toast('Disconnected from Firebase');
+  });
+
+  $('exportBtn')   .addEventListener('click', exportJSON);
+  $('clearDataBtn').addEventListener('click', () => {
+    if(!confirm('Delete ALL local data? Cannot be undone.')) return;
+    S.boxes=[]; S.locations=[];
+    persist(); renderBoxList(); renderLocationList();
+    toast('All data cleared');
+  });
+
+  /* Service Worker */
+  if('serviceWorker' in navigator)
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+  /* Auto-connect if config was previously saved */
+  if(localStorage.getItem(LS.FB_CFG)){
+    initFirebase().then(ok => {
+      if(!ok) return;
+      updateSyncUI();
+      setSyncBar('saving','Connecting…');
+      pullData().then(() => startLiveSync());
+    });
+  }
 }
 
-document.addEventListener('DOMContentLoaded',init);
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
