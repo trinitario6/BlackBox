@@ -182,6 +182,57 @@ body{
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .chip:active{transform:scale(0.95)}
 
+/* ── Filter tabs (Tags / Locations) ── */
+.filter-tabs{
+  display:flex;gap:0;flex-shrink:0;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+}
+.filter-tab{
+  flex:1;padding:8px 0;font-size:13px;font-weight:600;
+  color:var(--t3);background:none;border:none;cursor:pointer;
+  border-bottom:2px solid transparent;transition:color 150ms,border-color 150ms;
+}
+.filter-tab.active{color:var(--t1);border-bottom-color:var(--t1)}
+
+/* ── Location cards (Locations view) ── */
+.loc-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:14px 16px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+  animation:cardIn 220ms ease both;
+}
+.loc-icon{
+  width:38px;height:38px;background:var(--accent-bg);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);flex-shrink:0;
+}
+.loc-body{flex:1;min-width:0}
+.loc-name{font-size:15px;font-weight:600;color:var(--t1)}
+.loc-count{font-size:12px;color:var(--t3);margin-top:2px}
+.loc-actions{display:flex;gap:4px;flex-shrink:0}
+.loc-btn{
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;color:var(--t3);cursor:pointer;
+  border-radius:8px;transition:color 120ms,background 120ms;
+}
+.loc-btn:active{background:var(--accent-bg)}
+.loc-btn.del:active{color:var(--red);background:var(--red-bg)}
+
+/* ── select input (location dropdown in box form) ── */
+.fsel{
+  width:100%;height:44px;background:var(--bg);
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:0 36px 0 14px;
+  font-family:'Figtree',sans-serif;font-size:15px;color:var(--t1);
+  outline:none;transition:border-color 150ms,box-shadow 150ms;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239a9a94' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.fsel:focus{border-color:var(--t1);box-shadow:0 0 0 3px rgba(17,17,16,.07)}
+.fsel option{color:var(--t1)}
+
 /* ── List meta ── */
 .list-meta{
   padding:6px 16px 0;font-size:12px;color:var(--t3);flex-shrink:0;
@@ -499,7 +550,12 @@ body{
   </div>
   <div id="searchDrop" class="search-drop hidden"></div>
 
-  <div class="chips-wrap"><div id="chips" class="chips"></div></div>
+  <div class="filter-tabs">
+    <button class="filter-tab active" id="filterTabTags">Tags</button>
+    <button class="filter-tab" id="filterTabLocs">Locations</button>
+  </div>
+  <div class="chips-wrap" id="chipsWrapTags"><div id="chips" class="chips"></div></div>
+  <div class="chips-wrap hidden" id="chipsWrapLocs"><div id="chipsLocs" class="chips"></div></div>
 
   <div id="syncBar" class="sync-bar offline hidden">
     <span class="sync-dot"></span>
@@ -527,6 +583,18 @@ body{
     </div>
   </header>
   <div class="scroll-body" id="detailContent"></div>
+</div>
+
+<!-- ═══ VIEW: LOCATIONS ═══ -->
+<div id="view-locations" class="view">
+  <header class="topbar">
+    <div class="wordmark" style="font-size:17px;font-weight:600;letter-spacing:0">Locations</div>
+    <button class="btn accent sm" id="openAddLocation" style="flex-shrink:0">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="4" x2="12" y2="20"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+      Add
+    </button>
+  </header>
+  <div class="scroll-body" id="locationList"></div>
 </div>
 
 <!-- ═══ VIEW: SETTINGS ═══ -->
@@ -601,6 +669,10 @@ body{
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
     <span>Boxes</span>
   </button>
+  <button class="nav-tab" data-view="locations">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span>Locations</span>
+  </button>
   <button class="nav-tab" data-view="settings">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     <span>Settings</span>
@@ -620,8 +692,9 @@ body{
       </div>
       <div class="field">
         <label class="flbl">Location <span class="req">*</span></label>
-        <input id="f-location" class="finp" placeholder="e.g. Storage Room, Basement" list="locSug" autocomplete="off"/>
-        <datalist id="locSug"></datalist>
+        <select id="f-location" class="fsel">
+          <option value="">— Select a location —</option>
+        </select>
       </div>
       <div class="field">
         <label class="flbl">Description</label>
@@ -637,7 +710,7 @@ body{
       </div>
       <div class="field">
         <label class="flbl">Photos</label>
-        <input type="file" id="photoFileInput" accept="image/*" multiple capture="environment" style="display:none"/>
+        <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none"/>
         <div class="photo-zone" id="photoZone">
           <label for="photoFileInput" class="photo-zone-cta">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -680,6 +753,28 @@ body{
   </div>
 </div>
 
+<!-- ═══ MODAL: LOCATION FORM ═══ -->
+<div id="modal-location" class="modal-bg">
+  <div class="modal-sheet">
+    <div class="modal-puller"></div>
+    <div class="modal-body">
+      <h2 class="modal-title" id="locModalTitle">New Location</h2>
+      <div class="field">
+        <label class="flbl">Location name <span class="req">*</span></label>
+        <input id="f-locName" class="finp" placeholder="e.g. Storage Room, Garage, Basement…"/>
+      </div>
+      <div class="field">
+        <label class="flbl">Notes <span style="font-weight:400;color:var(--t3)">(optional)</span></label>
+        <input id="f-locNotes" class="finp" placeholder="e.g. Ground floor, north wall…"/>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="cancelLocBtn">Cancel</button>
+        <button class="btn accent" id="saveLocBtn">Save Location</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ LIGHTBOX ═══ -->
 <div id="lightbox" class="lightbox hidden">
   <div class="lb-bg" id="lbBg"></div>
@@ -697,15 +792,17 @@ body{
 'use strict';
 
 // ── Storage keys
-const LS = { BOXES:'bb_boxes', GCID:'bb_gcid', GTOKEN:'bb_gtoken', SHEET:'bb_sheet', FOLDER:'bb_folder' };
+const LS = { BOXES:'bb_boxes', LOCS:'bb_locs', GCID:'bb_gcid', GTOKEN:'bb_gtoken', SHEET:'bb_sheet', FOLDER:'bb_folder' };
 
 // ── Tag defaults
 const DEFAULT_TAGS = ['Christmas','Winter','Summer','Spring','Autumn','Clothes','Shoes','Bedding','Pillows','Towels','Electronics','Tools','Sports','Kids','Books','Kitchen','Holiday','Décor','Camping','Office'];
 
 // ── State
 const S = {
-  boxes:[], currentId:null, editBoxId:null, editItemId:null,
-  activeTag:null, pendingPhotos:[], lbPhotos:[], lbIdx:0,
+  boxes:[], locations:[], currentId:null, editBoxId:null, editItemId:null,
+  editLocId:null, activeTag:null, activeLoc:null,
+  activeFilterTab:'tags', // 'tags' | 'locs'
+  pendingPhotos:[], lbPhotos:[], lbIdx:0,
   gToken:null, gTokenClient:null,
 };
 
@@ -724,12 +821,15 @@ function toast(msg, type=''){
 
 // ── Persist
 function save(){
-  try{ localStorage.setItem(LS.BOXES, JSON.stringify(S.boxes)); }
-  catch(e){ toast('Storage full','err'); }
+  try{
+    localStorage.setItem(LS.BOXES, JSON.stringify(S.boxes));
+    localStorage.setItem(LS.LOCS,  JSON.stringify(S.locations));
+  } catch(e){ toast('Storage full','err'); }
   scheduleSheetSync();
 }
 function load(){
   try{ S.boxes=JSON.parse(localStorage.getItem(LS.BOXES)||'[]'); } catch{ S.boxes=[]; }
+  try{ S.locations=JSON.parse(localStorage.getItem(LS.LOCS)||'[]'); } catch{ S.locations=[]; }
   S.gToken = localStorage.getItem(LS.GTOKEN)||null;
   const cid = localStorage.getItem(LS.GCID)||'';
   const sid = localStorage.getItem(LS.SHEET)||'';
@@ -756,17 +856,30 @@ function goTo(v, back=false){
 function getBox(id){ return S.boxes.find(b=>b.id===id)||null; }
 
 function renderBoxList(subset){
-  let boxes = subset ?? (S.activeTag ? S.boxes.filter(b=>(b.tags||[]).includes(S.activeTag)) : S.boxes);
-  renderChips();
+  let boxes;
+  if(subset){ boxes=subset; }
+  else if(S.activeLoc){ boxes=S.boxes.filter(b=>b.location===S.activeLoc); }
+  else if(S.activeTag){ boxes=S.boxes.filter(b=>(b.tags||[]).includes(S.activeTag)); }
+  else{ boxes=S.boxes; }
+
+  renderChips(); renderLocChips();
+
   const meta=$('listMeta');
-  if(S.activeTag){ meta.textContent=`Tag: ${S.activeTag} · ${boxes.length} box${boxes.length!==1?'es':''}`; meta.classList.remove('hidden'); }
-  else{ meta.classList.add('hidden'); }
+  if(S.activeLoc){
+    meta.textContent=`Location: ${S.activeLoc} · ${boxes.length} box${boxes.length!==1?'es':''}`;
+    meta.classList.remove('hidden');
+  } else if(S.activeTag){
+    meta.textContent=`Tag: ${S.activeTag} · ${boxes.length} box${boxes.length!==1?'es':''}`;
+    meta.classList.remove('hidden');
+  } else { meta.classList.add('hidden'); }
+
   const el=$('boxList');
   if(!boxes.length){
+    const reason=S.activeLoc?`in ${S.activeLoc}`:S.activeTag?`tagged "${S.activeTag}"`:null;
     el.innerHTML=`<div class="empty">
       <div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-      <div class="empty-title">${S.activeTag?'No boxes with this tag':'No boxes yet'}</div>
-      <p class="empty-sub">${S.activeTag?'Try a different tag or clear the filter.':'Tap "New Box" to start cataloguing your storage.'}</p>
+      <div class="empty-title">${reason?`No boxes ${reason}`:'No boxes yet'}</div>
+      <p class="empty-sub">${reason?'Try clearing the filter.':'Tap "New Box" to start cataloguing your storage.'}</p>
     </div>`;
     return;
   }
@@ -792,7 +905,40 @@ function renderBoxList(subset){
   });
 }
 
-function openDetail(id){
+// ── Tag chips
+function renderChips(){
+  const all=[...new Set(S.boxes.flatMap(b=>b.tags||[]))].sort();
+  const strip=$('chips');
+  if(!all.length){ strip.innerHTML=''; return; }
+  strip.innerHTML=[['','All'],...all.map(t=>[t,t])].map(([v,l])=>`<button class="chip${(v===''?(!S.activeTag&&S.activeFilterTab==='tags'):S.activeTag===v)?' on':''}" data-tag="${esc(v)}">${esc(l)}</button>`).join('');
+  strip.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    S.activeTag=c.dataset.tag||null; S.activeLoc=null;
+    setFilterTab('tags'); renderBoxList();
+  }));
+}
+
+// ── Location filter chips (in boxes view filter bar)
+function renderLocChips(){
+  const strip=$('chipsLocs'); if(!strip) return;
+  const locs=S.locations.map(l=>l.name).sort();
+  if(!locs.length){
+    strip.innerHTML='<span style="font-size:13px;color:var(--t3);padding:2px 4px">No locations yet — add them in the Locations tab</span>';
+    return;
+  }
+  strip.innerHTML=[['','All'],...locs.map(l=>[l,l])].map(([v,l])=>`<button class="chip${(v===''?(!S.activeLoc&&S.activeFilterTab==='locs'):S.activeLoc===v)?' on':''}" data-loc="${esc(v)}">${esc(l)}</button>`).join('');
+  strip.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    S.activeLoc=c.dataset.loc||null; S.activeTag=null;
+    setFilterTab('locs'); renderBoxList();
+  }));
+}
+
+function setFilterTab(tab){
+  S.activeFilterTab=tab;
+  $('chipsWrapTags').classList.toggle('hidden', tab!=='tags');
+  $('chipsWrapLocs').classList.toggle('hidden', tab!=='locs');
+  $('filterTabTags').classList.toggle('active', tab==='tags');
+  $('filterTabLocs').classList.toggle('active', tab==='locs');
+}
   const box=getBox(id); if(!box) return;
   S.currentId=id;
   $('detailLabel').textContent=`BOX #${box.boxId}`;
@@ -845,26 +991,45 @@ function renderDetail(box){
 }
 
 // ── Box form
+function populateLocationSelect(selectedVal=''){
+  const sel=$('f-location');
+  sel.innerHTML='<option value="">— Select a location —</option>';
+  S.locations.forEach(l=>{
+    const o=document.createElement('option');
+    o.value=l.name; o.textContent=l.name;
+    if(l.name===selectedVal) o.selected=true;
+    sel.appendChild(o);
+  });
+  // If existing box has a location not in the list, add it as an option so it isn't lost
+  if(selectedVal && !S.locations.find(l=>l.name===selectedVal)){
+    const o=document.createElement('option');
+    o.value=selectedVal; o.textContent=selectedVal+' (unlisted)'; o.selected=true;
+    sel.appendChild(o);
+  }
+}
+
 function openBoxModal(editId=null){
   S.editBoxId=editId; S.pendingPhotos=[];
   $('boxModalTitle').textContent=editId?'Edit Box':'New Box';
-  const locs=[...new Set(S.boxes.map(b=>b.location).filter(Boolean))];
-  $('locSug').innerHTML=locs.map(l=>`<option value="${esc(l)}"/>`).join('');
   buildTagPicker(editId?(getBox(editId)?.tags||[]):[]);
   if(editId){
     const b=getBox(editId);
-    $('f-id').value=b.boxId||''; $('f-location').value=b.location||''; $('f-desc').value=b.description||'';
+    $('f-id').value=b.boxId||''; $('f-desc').value=b.description||'';
+    populateLocationSelect(b.location||'');
     S.pendingPhotos=(b.photos||[]).map(p=>({id:uid(),url:p.url,driveId:p.driveId||null}));
-  } else { $('f-id').value=$('f-location').value=$('f-desc').value=''; }
+  } else {
+    $('f-id').value=''; $('f-desc').value='';
+    populateLocationSelect('');
+  }
   renderPreviews();
   openModal('modal-box');
 }
 
 async function saveBox(){
-  const boxId=$('f-id').value.trim(), loc=$('f-location').value.trim(), desc=$('f-desc').value.trim();
+  const boxId=$('f-id').value.trim(), loc=$('f-location').value, desc=$('f-desc').value.trim();
   const tags=getSelectedTags();
   if(!boxId){ shake('f-id'); toast('Box ID required','err'); return; }
-  if(!loc){ shake('f-location'); toast('Location required','err'); return; }
+  if(!loc){ toast('Please select a location — add one in the Locations tab first','err'); return; }
   const dup=S.boxes.find(b=>b.boxId.toLowerCase()===boxId.toLowerCase()&&b.id!==S.editBoxId);
   if(dup){ shake('f-id'); toast('Box ID already exists','err'); return; }
   const photos=await uploadPhotos();
@@ -923,13 +1088,78 @@ function buildTagPicker(sel=[]){
 }
 function getSelectedTags(){ return [...$('tagPicker').querySelectorAll('.tag-opt.on')].map(b=>b.dataset.tag); }
 
-// ── Chip filter
-function renderChips(){
-  const all=[...new Set(S.boxes.flatMap(b=>b.tags||[]))].sort();
-  const strip=$('chips');
-  if(!all.length){ strip.innerHTML=''; return; }
-  strip.innerHTML=[['','All'],...all.map(t=>[t,t])].map(([v,l])=>`<button class="chip${(v===''?!S.activeTag:S.activeTag===v)?' on':''}" data-tag="${esc(v)}">${esc(l)}</button>`).join('');
-  strip.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{ S.activeTag=c.dataset.tag||null; renderBoxList(); }));
+// ── Location CRUD
+function renderLocationList(){
+  const el=$('locationList'); if(!el) return;
+  if(!S.locations.length){
+    el.innerHTML=`<div class="empty">
+      <div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="empty-title">No locations yet</div>
+      <p class="empty-sub">Add locations like Garage, Basement or Storage Room to organise your boxes.</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML=S.locations.map((loc,i)=>{
+    const count=S.boxes.filter(b=>b.location===loc.name).length;
+    return `<div class="loc-card" style="animation-delay:${Math.min(i*20,160)}ms">
+      <div class="loc-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="loc-body">
+        <div class="loc-name">${esc(loc.name)}</div>
+        ${loc.notes?`<div class="loc-count">${esc(loc.notes)}</div>`:
+          `<div class="loc-count">${count} box${count!==1?'es':''}</div>`}
+      </div>
+      <div class="loc-actions">
+        <button class="loc-btn" data-edit="${loc.id}" aria-label="Edit location">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="loc-btn del" data-del="${loc.id}" aria-label="Delete location">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.loc-btn[data-edit]').forEach(b=>b.addEventListener('click',()=>openLocModal(b.dataset.edit)));
+  el.querySelectorAll('.loc-btn[data-del]').forEach(b=>b.addEventListener('click',()=>deleteLocation(b.dataset.del)));
+}
+
+function openLocModal(editId=null){
+  S.editLocId=editId;
+  $('locModalTitle').textContent=editId?'Edit Location':'New Location';
+  if(editId){
+    const loc=S.locations.find(l=>l.id===editId);
+    $('f-locName').value=loc?.name||''; $('f-locNotes').value=loc?.notes||'';
+  } else { $('f-locName').value=''; $('f-locNotes').value=''; }
+  openModal('modal-location');
+}
+
+function saveLoc(){
+  const name=$('f-locName').value.trim(), notes=$('f-locNotes').value.trim();
+  if(!name){ shake('f-locName'); toast('Location name required','err'); return; }
+  const dup=S.locations.find(l=>l.name.toLowerCase()===name.toLowerCase()&&l.id!==S.editLocId);
+  if(dup){ shake('f-locName'); toast('Location already exists','err'); return; }
+  if(S.editLocId){
+    const loc=S.locations.find(l=>l.id===S.editLocId);
+    if(loc){
+      // Update boxes that referenced the old name
+      S.boxes.forEach(b=>{ if(b.location===loc.name) b.location=name; });
+      loc.name=name; loc.notes=notes;
+    }
+  } else {
+    S.locations.push({id:uid(),name,notes});
+  }
+  save(); closeModal('modal-location'); renderLocationList(); renderLocChips();
+  toast(S.editLocId?'Location updated ✓':'Location added ✓','ok'); S.editLocId=null;
+}
+
+function deleteLocation(locId){
+  const loc=S.locations.find(l=>l.id===locId); if(!loc) return;
+  const used=S.boxes.filter(b=>b.location===loc.name).length;
+  if(used>0 && !confirm(`"${loc.name}" is used by ${used} box${used!==1?'es':''}. Delete anyway? Boxes will keep the location name.`)) return;
+  S.locations=S.locations.filter(l=>l.id!==locId);
+  save(); renderLocationList(); renderLocChips();
+  toast('Location deleted');
 }
 
 // ── Photo previews
@@ -1112,10 +1342,17 @@ function exportJSON(){
 
 // ── Init
 function init(){
-  load(); renderBoxList();
+  load(); renderBoxList(); renderLocationList();
 
-  // Nav
-  document.querySelectorAll('.nav-tab[data-view]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.view)));
+  // Nav — when switching to locations view, refresh it
+  document.querySelectorAll('.nav-tab[data-view]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.view==='locations') renderLocationList();
+    goTo(b.dataset.view);
+  }));
+
+  // Filter tabs (Tags / Locations)
+  $('filterTabTags').addEventListener('click',()=>{ setFilterTab('tags'); renderBoxList(); });
+  $('filterTabLocs').addEventListener('click',()=>{ setFilterTab('locs'); renderBoxList(); });
 
   // Boxes view
   $('openAddBox').addEventListener('click',()=>openBoxModal());
@@ -1139,6 +1376,12 @@ function init(){
   $('cancelItemBtn').addEventListener('click',()=>closeModal('modal-item'));
   $('f-itemName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('saveItemBtn').click(); });
 
+  // Location view + modal
+  $('openAddLocation').addEventListener('click',()=>openLocModal());
+  $('saveLocBtn').addEventListener('click',saveLoc);
+  $('cancelLocBtn').addEventListener('click',()=>closeModal('modal-location'));
+  $('f-locName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('saveLocBtn').click(); });
+
   // Search
   $('searchInput').addEventListener('input',e=>doSearch(e.target.value));
   $('searchClear').addEventListener('click',()=>{ $('searchInput').value=''; $('searchDrop').classList.add('hidden'); $('searchClear').classList.add('hidden'); });
@@ -1151,7 +1394,7 @@ function init(){
   $('lbNext').addEventListener('click',()=>{ S.lbIdx=(S.lbIdx+1)%S.lbPhotos.length; renderLb(); });
   document.addEventListener('keydown',e=>{ if($('lightbox').classList.contains('hidden')) return; if(e.key==='ArrowLeft') $('lbPrev').click(); if(e.key==='ArrowRight') $('lbNext').click(); if(e.key==='Escape') closeLightbox(); });
 
-  // Modal backdrop
+  // Modal backdrop close on outside tap
   document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{ if(e.target===bg) closeModal(bg.id); }));
 
   // Settings
@@ -1170,7 +1413,7 @@ function init(){
   $('exportBtn').addEventListener('click',exportJSON);
   $('clearDataBtn').addEventListener('click',()=>{
     if(!confirm('Delete ALL boxes and items? Cannot be undone.')) return;
-    S.boxes=[]; save(); renderBoxList(); toast('All data cleared');
+    S.boxes=[]; S.locations=[]; save(); renderBoxList(); renderLocationList(); toast('All data cleared');
   });
 
   // Service Worker
