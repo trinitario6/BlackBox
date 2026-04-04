@@ -542,13 +542,56 @@ function scheduleSync(){
   _syncTimer = setTimeout(pushData, 2000);
 }
 
+/* Sanitise data before sending to Firestore:
+   - Remove undefined/null fields
+   - Strip base64 photo URLs (too large, Firestore rejects them)
+     Only photos with a real Firebase Storage URL are synced;
+     locally-stored photos remain on-device only until uploaded. */
+function sanitiseForFirestore(boxes, locations){
+  const cleanPhoto = p => {
+    if(!p || !p.url) return null;
+    // base64 strings start with "data:" — skip them
+    if(p.url.startsWith('data:')) return null;
+    return { url: p.url, storageRef: p.storageRef || '' };
+  };
+
+  const cleanItem = it => ({
+    id:    it.id    || '',
+    name:  it.name  || '',
+    qty:   it.qty   || 1,
+    notes: it.notes || '',
+  });
+
+  const cleanBox = b => ({
+    id:          b.id          || '',
+    boxId:       b.boxId       || '',
+    location:    b.location    || '',
+    description: b.description || '',
+    tags:        (b.tags   || []).filter(t => t && typeof t === 'string'),
+    items:       (b.items  || []).map(cleanItem),
+    photos:      (b.photos || []).map(cleanPhoto).filter(Boolean),
+    createdAt:   b.createdAt || new Date().toISOString(),
+  });
+
+  const cleanLoc = l => ({
+    id:    l.id    || '',
+    name:  l.name  || '',
+    notes: l.notes || '',
+  });
+
+  return {
+    boxes:     boxes.map(cleanBox),
+    locations: locations.map(cleanLoc),
+  };
+}
+
 async function pushData(){
   if(!FB.ready) return;
   setSyncBar('saving','Saving…');
   try{
+    const clean = sanitiseForFirestore(S.boxes, S.locations);
     await fbDoc().set({
-      boxes:     S.boxes,
-      locations: S.locations,
+      ...clean,
       updatedAt: new Date().toISOString(),
     });
     setSyncBar('synced','Synced · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
