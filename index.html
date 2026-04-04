@@ -970,6 +970,17 @@ async function saveBox(){
 
     if(S.editBoxId){
       const b = getBox(S.editBoxId);
+      // Delete any photos that were removed during edit
+      if(FB.ready){
+        const newRefs = new Set(photos.map(p => p.storageRef).filter(Boolean));
+        (b.photos||[]).forEach(p => {
+          if(p.storageRef && !newRefs.has(p.storageRef)){
+            fbSto().ref(p.storageRef).delete().catch(e =>
+              console.warn('Photo delete skipped:', p.storageRef, e.message)
+            );
+          }
+        });
+      }
       Object.assign(b, { boxId, location:loc, description:desc, tags, photos });
     }else{
       S.boxes.push({ id:uid(), boxId, location:loc, description:desc, tags, photos, items:[], createdAt:new Date().toISOString() });
@@ -995,6 +1006,19 @@ async function saveBox(){
 function deleteBox(){
   const b = getBox(S.currentId); if(!b) return;
   if(!confirm(`Delete Box #${b.boxId}? Cannot be undone.`)) return;
+
+  // Delete photos from Firebase Storage (fire-and-forget — don't block UI on this)
+  if(FB.ready){
+    (b.photos||[]).forEach(p => {
+      if(p.storageRef){
+        fbSto().ref(p.storageRef).delete().catch(e => {
+          // Non-fatal — file may already be gone
+          console.warn('Photo delete skipped:', p.storageRef, e.message);
+        });
+      }
+    });
+  }
+
   S.boxes = S.boxes.filter(x => x.id !== S.currentId);
   persist();
   goTo('boxes');
