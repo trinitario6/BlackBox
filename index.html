@@ -666,29 +666,75 @@ function renderPreviews(){
 function handleFiles(files){
   [...files].forEach(file=>{const r=new FileReader();r.onload=e=>{S.pendingPhotos.push({id:uid(),dataUrl:e.target.result,file,url:e.target.result});renderPreviews();};r.readAsDataURL(file);});
 }
+async function driveRequest(url, opts={}){
+  let token=S.gToken;
+  let res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
+  if(res.status===401){
+    try{ token=await refreshToken(); }
+    catch(e){ throw new Error('Session expired — tap Reconnect in Settings'); }
+    res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
+  }
+  return res;
+}
+
 async function uploadPhotos(){
   const already=S.pendingPhotos.filter(p=>!p.file||p.driveId);
   const toUp=S.pendingPhotos.filter(p=>p.file&&!p.driveId);
   const results=already.map(p=>({url:p.url,driveId:p.driveId||null}));
   if(!toUp.length) return results;
-  if(!S.gToken){toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));toast('Photos saved locally (sign in to back up to Drive)');return results;}
+  if(!S.gToken){
+    toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));
+    toast('Photos saved locally (sign in to back up to Drive)');
+    return results;
+  }
   const folderId=localStorage.getItem(LS.FOLDER);
-  if(!folderId){toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));return results;}
+  if(!folderId){
+    toUp.forEach(p=>results.push({url:p.dataUrl,driveId:null}));
+    toast('No Drive folder set — photos saved locally','err');
+    return results;
+  }
   showBar(true);
+  let uploadedCount=0;
   for(let i=0;i<toUp.length;i++){
     setBar((i/toUp.length)*90);
+    const p=toUp[i];
     try{
-      const p=toUp[i],form=new FormData();
-      form.append('metadata',new Blob([JSON.stringify({name:`bb_${Date.now()}_${p.file.name}`,parents:[folderId]})],{type:'application/json'}));
+      // Step 1: upload file
+      const form=new FormData();
+      form.append('metadata',new Blob([JSON.stringify({
+        name:`bb_${Date.now()}_${p.file.name}`,
+        parents:[folderId]
+      })],{type:'application/json'}));
       form.append('file',p.file);
-      const res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+S.gToken},body:form});
-      if(!res.ok) throw new Error(res.status);
-      const d=await res.json();
-      await fetch(`https://www.googleapis.com/drive/v3/files/${d.id}/permissions`,{method:'POST',headers:{Authorization:'Bearer '+S.gToken,'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})});
+      const uploadRes=await driveRequest(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+        {method:'POST',body:form}
+      );
+      if(!uploadRes.ok){
+        const errBody=await uploadRes.json().catch(()=>({}));
+        throw new Error(`Upload ${uploadRes.status}: ${errBody?.error?.message||'unknown'}`);
+      }
+      const d=await uploadRes.json();
+      // Step 2: make file publicly readable
+      const permRes=await driveRequest(
+        `https://www.googleapis.com/drive/v3/files/${d.id}/permissions`,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+         body:JSON.stringify({role:'reader',type:'anyone'})}
+      );
+      if(!permRes.ok){
+        const errBody=await permRes.json().catch(()=>({}));
+        throw new Error(`Permission ${permRes.status}: ${errBody?.error?.message||'unknown'}`);
+      }
       results.push({url:`https://drive.google.com/thumbnail?id=${d.id}&sz=w800`,driveId:d.id});
-    }catch(e){results.push({url:toUp[i].dataUrl,driveId:null});}
+      uploadedCount++;
+    }catch(e){
+      console.error('Photo upload failed:',e.message);
+      toast(`Photo upload failed: ${e.message}`,'err');
+      results.push({url:p.dataUrl,driveId:null});
+    }
   }
-  setBar(100);setTimeout(()=>showBar(false),600);toast('Photos uploaded ✓','ok');
+  setBar(100);setTimeout(()=>showBar(false),600);
+  if(uploadedCount>0) toast(`${uploadedCount} photo${uploadedCount!==1?'s':''} uploaded to Drive ✓`,'ok');
   return results;
 }
 function showBar(show){$('uploadBar').classList.toggle('hidden',!show);if(show)$('uploadFill').style.width='0%';}
