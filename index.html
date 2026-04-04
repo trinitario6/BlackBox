@@ -533,15 +533,7 @@ async function initFirebase(){
 }
 
 const fbDoc = () => window.firebase.firestore().collection('blackbox').doc('data');
-const fbSto = () => {
-  // Newer Firebase projects use firebasestorage.app bucket domain.
-  // Pass the bucket URL explicitly so the compat SDK finds it correctly.
-  const cfg = JSON.parse(localStorage.getItem(LS.FB_CFG) || '{}');
-  const bucket = cfg.storageBucket || '';
-  // Ensure bucket URL has gs:// prefix
-  const bucketUrl = bucket.startsWith('gs://') ? bucket : `gs://${bucket}`;
-  return window.firebase.storage(window.firebase.app(), bucketUrl);
-};
+const fbSto = () => window.firebase.storage();
 
 /* Push local data to Firestore */
 let _syncTimer = null;
@@ -666,17 +658,10 @@ async function uploadPhotos(){
 
   if(!toUp.length) return results;
 
+  // Verify Firebase is ready
   if(!FB.ready){
     toUp.forEach(p => results.push({ url: p.dataUrl, storageRef: null }));
     toast('Photos saved locally — add Firebase config to back them up');
-    return results;
-  }
-
-  // Verify storageBucket is configured
-  const cfg = JSON.parse(localStorage.getItem(LS.FB_CFG)||'{}');
-  if(!cfg.storageBucket){
-    toUp.forEach(p => results.push({ url: p.dataUrl, storageRef: null }));
-    toast('No storageBucket in Firebase config — photos saved locally','err');
     return results;
   }
 
