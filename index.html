@@ -533,7 +533,15 @@ async function initFirebase(){
 }
 
 const fbDoc = () => window.firebase.firestore().collection('blackbox').doc('data');
-const fbSto = () => window.firebase.storage();
+const fbSto = () => {
+  // Newer Firebase projects use firebasestorage.app bucket domain.
+  // Pass the bucket URL explicitly so the compat SDK finds it correctly.
+  const cfg = JSON.parse(localStorage.getItem(LS.FB_CFG) || '{}');
+  const bucket = cfg.storageBucket || '';
+  // Ensure bucket URL has gs:// prefix
+  const bucketUrl = bucket.startsWith('gs://') ? bucket : `gs://${bucket}`;
+  return window.firebase.storage(window.firebase.app(), bucketUrl);
+};
 
 /* Push local data to Firestore */
 let _syncTimer = null;
@@ -652,7 +660,6 @@ function showBar(show){ $('uploadBar').classList.toggle('hidden',!show); if(show
 function setBar(pct)  { $('uploadFill').style.width = pct+'%'; }
 
 async function uploadPhotos(){
-  // Split pending into already-uploaded vs new files
   const already = S.pendingPhotos.filter(p => !p.file || p.storageRef);
   const toUp    = S.pendingPhotos.filter(p =>  p.file && !p.storageRef);
   const results = already.map(p => ({ url: p.url, storageRef: p.storageRef||null }));
@@ -660,9 +667,16 @@ async function uploadPhotos(){
   if(!toUp.length) return results;
 
   if(!FB.ready){
-    // No Firebase — store as base64 locally
     toUp.forEach(p => results.push({ url: p.dataUrl, storageRef: null }));
     toast('Photos saved locally — add Firebase config to back them up');
+    return results;
+  }
+
+  // Verify storageBucket is configured
+  const cfg = JSON.parse(localStorage.getItem(LS.FB_CFG)||'{}');
+  if(!cfg.storageBucket){
+    toUp.forEach(p => results.push({ url: p.dataUrl, storageRef: null }));
+    toast('No storageBucket in Firebase config — photos saved locally','err');
     return results;
   }
 
@@ -674,15 +688,17 @@ async function uploadPhotos(){
     try{
       const safeName = p.file.name.replace(/[^a-z0-9._-]/gi, '_');
       const path     = `photos/${Date.now()}_${safeName}`;
-      const ref      = fbSto().ref(path);
-      // Upload with metadata
+      const storage  = fbSto();
+      const ref      = storage.ref(path);
       const snap     = await ref.put(p.file, { contentType: p.file.type });
       const url      = await snap.ref.getDownloadURL();
       results.push({ url, storageRef: path });
       uploaded++;
     }catch(e){
-      console.error('Photo upload failed:', e);
-      toast('Photo upload failed: '+e.message, 'err');
+      // Surface the full error so we can diagnose
+      const msg = e.code ? `${e.code}: ${e.message}` : e.message;
+      console.error('Photo upload failed:', msg, e);
+      toast('Upload failed: '+msg, 'err');
       results.push({ url: p.dataUrl, storageRef: null });
     }
   }
