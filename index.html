@@ -216,6 +216,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:40px;height:40px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .lb-prev{left:12px}.lb-next{right:12px}
 .lb-ctr{position:absolute;bottom:max(24px,var(--safe-b));left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.7);z-index:2;background:rgba(0,0,0,.4);padding:4px 12px;border-radius:999px}
+.btn:disabled{opacity:.45;pointer-events:none}
 .hidden{display:none!important}
 </style>
 </head>
@@ -941,7 +942,11 @@ function openBoxModal(editId=null){
   openModal('modal-box');
 }
 
+let _saving = false; // guard against double-tap
+
 async function saveBox(){
+  if(_saving) return;
+
   const boxId = $('f-id').value.trim();
   const loc   = $('f-location').value;
   const desc  = $('f-desc').value.trim();
@@ -953,24 +958,38 @@ async function saveBox(){
   const dup = S.boxes.find(b => b.boxId.toLowerCase()===boxId.toLowerCase() && b.id!==S.editBoxId);
   if(dup){ shake('f-id'); toast('Box ID already exists','err'); return; }
 
-  const photos = await uploadPhotos();
+  // Lock the button while uploading
+  _saving = true;
+  const saveBtn = $('saveBoxBtn');
+  const origText = saveBtn.textContent;
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving…';
 
-  if(S.editBoxId){
-    const b = getBox(S.editBoxId);
-    Object.assign(b, { boxId, location:loc, description:desc, tags, photos });
-  }else{
-    S.boxes.push({ id:uid(), boxId, location:loc, description:desc, tags, photos, items:[], createdAt:new Date().toISOString() });
-  }
+  try{
+    const photos = await uploadPhotos();
 
-  persist();
-  closeModal('modal-box');
-  renderBoxList();
-  if(S.editBoxId && S.currentId===S.editBoxId){
-    $('detailLabel').textContent = `BOX #${boxId}`;
-    renderDetail(getBox(S.editBoxId));
+    if(S.editBoxId){
+      const b = getBox(S.editBoxId);
+      Object.assign(b, { boxId, location:loc, description:desc, tags, photos });
+    }else{
+      S.boxes.push({ id:uid(), boxId, location:loc, description:desc, tags, photos, items:[], createdAt:new Date().toISOString() });
+    }
+
+    persist();
+    closeModal('modal-box');
+    renderBoxList();
+    if(S.editBoxId && S.currentId===S.editBoxId){
+      $('detailLabel').textContent = `BOX #${boxId}`;
+      renderDetail(getBox(S.editBoxId));
+    }
+    toast(S.editBoxId ? 'Box updated ✓' : 'Box saved ✓', 'ok');
+    S.editBoxId = null;
+  }finally{
+    // Always re-enable even if something threw
+    _saving = false;
+    saveBtn.disabled = false;
+    saveBtn.textContent = origText;
   }
-  toast(S.editBoxId ? 'Box updated ✓' : 'Box saved ✓', 'ok');
-  S.editBoxId = null;
 }
 
 function deleteBox(){
