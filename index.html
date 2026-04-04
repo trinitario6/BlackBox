@@ -278,6 +278,18 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   <div class="scroll-body" id="locationList"></div>
 </div>
 
+<!-- ═══ TAGS ═══ -->
+<div id="view-tags" class="view">
+  <header class="topbar">
+    <div class="topbar-title">Tags</div>
+    <button class="btn accent sm" id="openAddTag" style="flex-shrink:0">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="4" x2="12" y2="20"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+      Add
+    </button>
+  </header>
+  <div class="scroll-body" id="tagList"></div>
+</div>
+
 <!-- ═══ SETTINGS ═══ -->
 <div id="view-settings" class="view">
   <header class="topbar"><div class="topbar-title">Settings</div></header>
@@ -350,6 +362,10 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     <span>Locations</span>
   </button>
+  <button class="nav-tab" data-view="tags">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    <span>Tags</span>
+  </button>
   <button class="nav-tab" data-view="settings">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     <span>Settings</span>
@@ -377,9 +393,10 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
       <label class="flbl">Tags</label>
       <div id="tagPicker" class="tag-picker"></div>
       <div class="tag-custom">
-        <input id="customTagInput" class="finp" placeholder="Custom tag…"/>
+        <input id="customTagInput" class="finp" placeholder="New tag…"/>
         <button type="button" class="btn ghost sm" id="addCustomTagBtn">+ Add</button>
       </div>
+      <p style="font-size:12px;color:var(--t3);margin-top:6px">Add &amp; manage all tags in the <strong>Tags</strong> tab.</p>
     </div>
     <div class="field">
       <label class="flbl">Photos</label>
@@ -429,6 +446,19 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
   </div></div>
 </div>
 
+<!-- ═══ MODAL: TAG ═══ -->
+<div id="modal-tag" class="modal-bg">
+  <div class="modal-sheet"><div class="modal-puller"></div>
+  <div class="modal-body">
+    <h2 class="modal-title" id="tagModalTitle">New Tag</h2>
+    <div class="field"><label class="flbl">Tag name <span class="req">*</span></label><input id="f-tagName" class="finp" placeholder="e.g. Christmas, Winter, Electronics…"/></div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="cancelTagBtn">Cancel</button>
+      <button class="btn accent" id="saveTagBtn">Save Tag</button>
+    </div>
+  </div></div>
+</div>
+
 <!-- ═══ LIGHTBOX ═══ -->
 <div id="lightbox" class="lightbox hidden">
   <div class="lb-bg" id="lbBg"></div>
@@ -443,15 +473,17 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
 'use strict';
 
 /* ── Constants ── */
-const LS = { BOXES:'bb_boxes', LOCS:'bb_locs', FB_CFG:'bb_fb_cfg' };
-const DEFAULT_TAGS = ['Christmas','Winter','Summer','Spring','Autumn','Clothes','Shoes',
+const LS = { BOXES:'bb_boxes', LOCS:'bb_locs', TAGS:'bb_tags', FB_CFG:'bb_fb_cfg' };
+
+// Seed tags shown when no master list exists yet
+const SEED_TAGS = ['Christmas','Winter','Summer','Spring','Autumn','Clothes','Shoes',
   'Bedding','Pillows','Towels','Electronics','Tools','Sports','Kids','Books',
   'Kitchen','Holiday','Décor','Camping','Office'];
 
 /* ── State ── */
 const S = {
-  boxes:[], locations:[],
-  currentId:null, editBoxId:null, editItemId:null, editLocId:null,
+  boxes:[], locations:[], tags:[],
+  currentId:null, editBoxId:null, editItemId:null, editLocId:null, editTagId:null,
   activeTag:null, activeLoc:null, filterTab:'tags',
   pendingPhotos:[], lbPhotos:[], lbIdx:0,
 };
@@ -477,6 +509,7 @@ function persist(){
   try{
     localStorage.setItem(LS.BOXES, JSON.stringify(S.boxes));
     localStorage.setItem(LS.LOCS,  JSON.stringify(S.locations));
+    localStorage.setItem(LS.TAGS,  JSON.stringify(S.tags));
   }catch(e){ toast('Storage full','err'); }
   scheduleSync();
 }
@@ -484,6 +517,9 @@ function persist(){
 function load(){
   try{ S.boxes     = JSON.parse(localStorage.getItem(LS.BOXES)||'[]'); }catch{ S.boxes=[]; }
   try{ S.locations = JSON.parse(localStorage.getItem(LS.LOCS) ||'[]'); }catch{ S.locations=[]; }
+  try{ S.tags      = JSON.parse(localStorage.getItem(LS.TAGS) ||'null'); }catch{ S.tags=null; }
+  // First run — seed with defaults
+  if(!S.tags){ S.tags = SEED_TAGS.map(name => ({id:uid(), name})); }
   const saved = localStorage.getItem(LS.FB_CFG)||'';
   if($('fbConfig')) $('fbConfig').value = saved;
 }
@@ -583,6 +619,7 @@ function sanitiseForFirestore(boxes, locations){
   return {
     boxes:     boxes.map(cleanBox),
     locations: locations.map(cleanLoc),
+    tags:      S.tags.map(t => ({ id: t.id||'', name: t.name||'' })),
   };
 }
 
@@ -627,8 +664,13 @@ function applyData(d){
     S.locations = d.locations;
     localStorage.setItem(LS.LOCS, JSON.stringify(S.locations));
   }
+  if(Array.isArray(d.tags) && d.tags.length){
+    S.tags = d.tags;
+    localStorage.setItem(LS.TAGS, JSON.stringify(S.tags));
+  }
   renderBoxList();
   renderLocationList();
+  renderTagList();
 }
 
 /* Real-time listener — updates all devices the moment Firestore changes */
@@ -807,10 +849,10 @@ function setFilterTab(tab){
 }
 
 function renderTagChips(){
-  const all = [...new Set(S.boxes.flatMap(b => b.tags||[]))].sort();
+  const all = [...S.tags].sort((a,b) => a.name.localeCompare(b.name));
   const s   = $('chips');
   if(!all.length){ s.innerHTML=''; return; }
-  s.innerHTML = [['','All'], ...all.map(t=>[t,t])].map(([v,l]) =>
+  s.innerHTML = [['','All'], ...all.map(t=>[t.name,t.name])].map(([v,l]) =>
     `<button class="chip${(v===''?!S.activeTag:S.activeTag===v)&&S.filterTab==='tags'?' on':''}" data-tag="${esc(v)}">${esc(l)}</button>`
   ).join('');
   s.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
@@ -1153,13 +1195,100 @@ function deleteLocation(locId){
 
 /* ── Tag picker ── */
 function buildTagPicker(sel=[]){
-  const custom = [...new Set(S.boxes.flatMap(b => b.tags||[]))].filter(t => !DEFAULT_TAGS.includes(t));
-  $('tagPicker').innerHTML = [...DEFAULT_TAGS, ...custom].map(t =>
-    `<button type="button" class="tag-opt${sel.includes(t)?' on':''}" data-tag="${esc(t)}">${esc(t)}</button>`
+  // Use master tag list; sort alphabetically
+  const all = [...S.tags].sort((a,b) => a.name.localeCompare(b.name));
+  $('tagPicker').innerHTML = all.map(t =>
+    `<button type="button" class="tag-opt${sel.includes(t.name)?' on':''}" data-tag="${esc(t.name)}">${esc(t.name)}</button>`
   ).join('');
   $('tagPicker').querySelectorAll('.tag-opt').forEach(b => b.addEventListener('click', () => b.classList.toggle('on')));
 }
 function getSelectedTags(){ return [...$('tagPicker').querySelectorAll('.tag-opt.on')].map(b => b.dataset.tag); }
+
+/* ── Tag CRUD ── */
+function renderTagList(){
+  const el = $('tagList'); if(!el) return;
+  const sorted = [...S.tags].sort((a,b) => a.name.localeCompare(b.name));
+  if(!sorted.length){
+    el.innerHTML = `<div class="empty">
+      <div class="empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+      <div class="empty-title">No tags yet</div>
+      <p class="empty-sub">Add tags like Christmas, Winter or Clothes to categorise your boxes.</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = sorted.map(tag => {
+    const count = S.boxes.filter(b => (b.tags||[]).includes(tag.name)).length;
+    return `<div class="loc-card">
+      <div class="loc-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      </div>
+      <div class="loc-body">
+        <div class="loc-name">${esc(tag.name)}</div>
+        <div class="loc-sub">${count} box${count!==1?'es':''}</div>
+      </div>
+      <div class="loc-actions">
+        <button class="loc-btn" data-edit="${tag.id}" aria-label="Edit">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="loc-btn del" data-del="${tag.id}" aria-label="Delete">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.loc-btn[data-edit]').forEach(b => b.addEventListener('click', () => openTagModal(b.dataset.edit)));
+  el.querySelectorAll('.loc-btn[data-del]') .forEach(b => b.addEventListener('click', () => deleteTag(b.dataset.del)));
+}
+
+function openTagModal(editId=null){
+  S.editTagId = editId;
+  $('tagModalTitle').textContent = editId ? 'Edit Tag' : 'New Tag';
+  const tag = editId ? S.tags.find(t => t.id===editId) : null;
+  $('f-tagName').value = tag?.name || '';
+  openModal('modal-tag');
+}
+
+function saveTag(){
+  const name = $('f-tagName').value.trim();
+  if(!name){ shake('f-tagName'); toast('Tag name required','err'); return; }
+  const dup = S.tags.find(t => t.name.toLowerCase()===name.toLowerCase() && t.id!==S.editTagId);
+  if(dup){ shake('f-tagName'); toast('Tag already exists','err'); return; }
+  if(S.editTagId){
+    const tag = S.tags.find(t => t.id===S.editTagId);
+    if(tag){
+      const oldName = tag.name;
+      // Rename tag on all boxes that use it
+      S.boxes.forEach(b => {
+        if((b.tags||[]).includes(oldName)){
+          b.tags = b.tags.map(t => t===oldName ? name : t);
+        }
+      });
+      tag.name = name;
+    }
+  }else{
+    S.tags.push({ id:uid(), name });
+  }
+  persist();
+  closeModal('modal-tag');
+  renderTagList();
+  renderTagChips();
+  toast(S.editTagId ? 'Tag updated ✓' : 'Tag added ✓', 'ok');
+  S.editTagId = null;
+}
+
+function deleteTag(tagId){
+  const tag = S.tags.find(t => t.id===tagId); if(!tag) return;
+  const used = S.boxes.filter(b => (b.tags||[]).includes(tag.name)).length;
+  if(used>0 && !confirm(`"${tag.name}" is used by ${used} box${used!==1?'es':''}. Remove tag from those boxes too?`)) return;
+  // Remove tag from all boxes
+  S.boxes.forEach(b => { b.tags = (b.tags||[]).filter(t => t!==tag.name); });
+  S.tags = S.tags.filter(t => t.id!==tagId);
+  persist();
+  renderTagList();
+  renderTagChips();
+  renderBoxList();
+  toast('Tag deleted');
+}
 
 /* ── Photo previews ── */
 function renderPreviews(){
@@ -1274,6 +1403,7 @@ function init(){
   load();
   renderBoxList();
   renderLocationList();
+  renderTagList();
 
   /* Nav */
   document.querySelectorAll('.nav-tab[data-view]').forEach(b =>
@@ -1296,13 +1426,22 @@ function init(){
   $('photoFileInput').addEventListener('change', e => { handleFiles(e.target.files); e.target.value=''; });
   $('addCustomTagBtn').addEventListener('click', () => {
     const v = $('customTagInput').value.trim(); if(!v) return;
-    const b = document.createElement('button');
-    b.type='button'; b.className='tag-opt on'; b.dataset.tag=v; b.textContent=v;
-    b.addEventListener('click', () => b.classList.toggle('on'));
-    $('tagPicker').appendChild(b);
+    // Add to master list if not already there
+    if(!S.tags.find(t => t.name.toLowerCase()===v.toLowerCase())){
+      S.tags.push({ id:uid(), name:v });
+      persist();
+    }
+    // Select it in the picker
+    buildTagPicker(getSelectedTags().concat(v));
     $('customTagInput').value='';
   });
   $('customTagInput').addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); $('addCustomTagBtn').click(); } });
+
+  /* Tags view + modal */
+  $('openAddTag').addEventListener('click', () => openTagModal());
+  $('saveTagBtn').addEventListener('click', saveTag);
+  $('cancelTagBtn').addEventListener('click', () => closeModal('modal-tag'));
+  $('f-tagName').addEventListener('keydown', e => { if(e.key==='Enter') $('saveTagBtn').click(); });
 
   /* Item modal */
   $('saveItemBtn')  .addEventListener('click', saveItem);
