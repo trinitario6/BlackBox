@@ -310,6 +310,7 @@ body{font-family:'Figtree',system-ui,sans-serif;font-size:15px;line-height:1.5;b
         <p class="s-hint">Create &amp; share a Drive folder (Editor). ID is in URL: <code>drive/folders/FOLDER_ID</code></p>
         <div class="s-actions">
           <button class="btn accent" id="saveConnectBtn">Save &amp; Sign In</button>
+          <button class="btn ghost" id="reconnectBtn" style="display:none">Reconnect</button>
           <button class="btn ghost" id="syncNowBtn" style="display:none">Sync Now</button>
           <button class="btn ghost" id="disconnectBtn" style="display:none">Disconnect</button>
         </div>
@@ -695,37 +696,81 @@ function setBar(pct){$('uploadFill').style.width=pct+'%';}
 
 let _syncTimer=null;
 function scheduleSync(){clearTimeout(_syncTimer);_syncTimer=setTimeout(syncToSheet,4000);}
+
+/* Request a fresh token silently (no popup if possible) */
+function refreshToken(){
+  return new Promise((resolve,reject)=>{
+    if(!S.gTokenClient){reject(new Error('Not initialised'));return;}
+    // Override callback temporarily to capture new token
+    const prev=S.gTokenClient.callback;
+    S.gTokenClient.callback=resp=>{
+      S.gTokenClient.callback=prev;
+      if(resp.error){reject(new Error(resp.error));return;}
+      S.gToken=resp.access_token;
+      localStorage.setItem(LS.GTOKEN,S.gToken);
+      resolve(S.gToken);
+    };
+    // prompt:'' means silent refresh if session still valid
+    S.gTokenClient.requestAccessToken({prompt:''});
+  });
+}
+
+async function sheetsRequest(url, opts={}){
+  let token=S.gToken;
+  let res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
+  if(res.status===401){
+    // Token expired — try silent refresh
+    try{ token=await refreshToken(); }
+    catch(e){ throw new Error('Session expired — tap Reconnect in Settings'); }
+    res=await fetch(url,{...opts,headers:{...opts.headers,Authorization:'Bearer '+token}});
+  }
+  return res;
+}
+
 function updateSyncUI(){
   const ok=!!S.gToken;
   const ss=$('syncStatus');if(ss){ss.className='drive-status '+(ok?'online':'offline');$('syncStatusText').textContent=ok?'Connected — auto-syncing':'Not connected';}
   const sb=$('syncBar');if(sb){sb.classList.toggle('hidden',!ok);if(ok)setSyncBar('saving','Waiting for first sync…');}
+  if($('saveConnectBtn'))$('saveConnectBtn').style.display=ok?'none':'';
+  if($('reconnectBtn'))$('reconnectBtn').style.display=ok?'':'none';
   if($('syncNowBtn'))$('syncNowBtn').style.display=ok?'':'none';
   if($('disconnectBtn'))$('disconnectBtn').style.display=ok?'':'none';
-  if($('saveConnectBtn'))$('saveConnectBtn').style.display=ok?'none':'';
 }
 function setSyncBar(cls,text){const sb=$('syncBar');if(!sb)return;sb.className='sync-bar '+cls;$('syncText').textContent=text;}
+
 async function syncToSheet(){
-  const token=S.gToken,sheetId=localStorage.getItem(LS.SHEET);if(!token||!sheetId)return;
+  const sheetId=localStorage.getItem(LS.SHEET);
+  if(!S.gToken||!sheetId)return;
   setSyncBar('saving','Saving…');
   try{
     const payload={boxes:S.boxes,locations:S.locations};
-    const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1?valueInputOption=RAW`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({values:[[JSON.stringify(payload)]]})});
-    if(!res.ok)throw new Error(res.status);
+    const res=await sheetsRequest(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1?valueInputOption=RAW`,
+      {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:[[JSON.stringify(payload)]]})});
+    if(!res.ok){
+      const err=await res.json().catch(()=>({error:{message:res.status}}));
+      throw new Error(err?.error?.message||res.status);
+    }
     setSyncBar('synced','Synced · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
-  }catch(e){setSyncBar('error','Sync failed — '+e.message);toast('Sync failed: '+e.message,'err');}
+  }catch(e){
+    setSyncBar('error','Sync error');
+    toast('Sync failed: '+e.message,'err');
+  }
 }
+
 async function syncFromSheet(){
-  const token=S.gToken,sheetId=localStorage.getItem(LS.SHEET);if(!token||!sheetId)return;
+  const sheetId=localStorage.getItem(LS.SHEET);
+  if(!S.gToken||!sheetId)return;
   setSyncBar('saving','Loading…');
   try{
-    const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1`,{headers:{Authorization:'Bearer '+token}});
+    const res=await sheetsRequest(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1`);
     if(!res.ok)throw new Error(res.status);
     const d=await res.json();const raw=d.values?.[0]?.[0];if(!raw)return;
     const loaded=JSON.parse(raw);
     if(loaded.boxes&&Array.isArray(loaded.boxes)){S.boxes=loaded.boxes;localStorage.setItem(LS.BOXES,JSON.stringify(S.boxes));}
     if(loaded.locations&&Array.isArray(loaded.locations)){S.locations=loaded.locations;localStorage.setItem(LS.LOCS,JSON.stringify(S.locations));}
     renderBoxList();renderLocationList();toast('Data loaded from Sheet ✓','ok');setSyncBar('synced','Synced');
-  }catch(e){setSyncBar('error','Sync failed');}
+  }catch(e){setSyncBar('error','Sync error');}
 }
 
 function loadGIS(){return new Promise((res,rej)=>{if(window.google?.accounts?.oauth2){res();return;}const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
@@ -811,6 +856,7 @@ function init(){
     try{await initGoogleAuth(cid);S.gTokenClient.requestAccessToken();}catch(e){toast('Failed to load Google Sign-In','err');}
   });
   const sn=$('syncNowBtn');if(sn)sn.addEventListener('click',async()=>{await syncFromSheet();await syncToSheet();});
+  const rb=$('reconnectBtn');if(rb)rb.addEventListener('click',()=>{if(S.gTokenClient)S.gTokenClient.requestAccessToken({prompt:'',hint:''});else toast('Save settings first','err');});
   $('disconnectBtn').addEventListener('click',()=>{S.gToken=null;localStorage.removeItem(LS.GTOKEN);updateSyncUI();toast('Disconnected');});
   $('exportBtn').addEventListener('click',exportJSON);
   $('clearDataBtn').addEventListener('click',()=>{if(!confirm('Delete ALL data? Cannot be undone.'))return;S.boxes=[];S.locations=[];persist();renderBoxList();renderLocationList();toast('All data cleared');});
