@@ -939,6 +939,8 @@ function setFilterTab(tab){
   $('filterTabTags').classList.toggle('active', tab==='tags');
   $('filterTabLocs').classList.toggle('active', tab==='locs');
 }
+
+function openDetail(id){
   const box=getBox(id); if(!box) return;
   S.currentId=id;
   $('detailLabel').textContent=`BOX #${box.boxId}`;
