@@ -56,9 +56,11 @@ body{
   transform:translateX(100%);
   transition:transform 300ms cubic-bezier(0.22,1,0.36,1);
   overflow:hidden;z-index:1;
+  pointer-events:none;
+  visibility:hidden;
 }
-.view.active{transform:translateX(0)}
-.view.behind{transform:translateX(-6%)}
+.view.active{transform:translateX(0);pointer-events:all;visibility:visible}
+.view.behind{transform:translateX(-6%);pointer-events:none;visibility:hidden}
 
 /* ── Topbar ── */
 .topbar{
@@ -844,9 +846,16 @@ function load(){
 let _view='boxes';
 function goTo(v, back=false){
   const prev=$('view-'+_view), next=$('view-'+v);
-  if(!next) return;
+  if(!next || v===_view) return;
+  // Show the outgoing view briefly so its slide-out animation is visible
+  prev.style.visibility='visible';
   prev.classList.remove('active');
-  if(!back){ prev.classList.add('behind'); setTimeout(()=>prev.classList.remove('behind'),350); }
+  if(!back){
+    prev.classList.add('behind');
+    setTimeout(()=>{ prev.classList.remove('behind'); prev.style.visibility=''; }, 350);
+  } else {
+    setTimeout(()=>{ prev.style.visibility=''; }, 350);
+  }
   next.classList.add('active');
   _view=v;
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
