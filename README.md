@@ -1,107 +1,74 @@
 # Black Box 📦
 
-An offline-first PWA to catalogue your household storage boxes — contents, photos, locations and tags. Installable on Android via Chrome.
+Clean, minimal PWA for cataloguing household storage boxes. Installable on Android. Works offline. Syncs to Google Sheets so all household members share the same data.
 
----
+## How sync works
 
-## Deploy in 5 minutes
+| What | Where | Who sees it |
+|------|-------|-------------|
+| Box data (IDs, locations, items, tags) | Google Sheet (one shared) | Everyone — real-time |
+| Photos | Google Drive folder (one shared) | Everyone — via shareable link |
+| Each person signs in with | Their own Google account | — |
 
-### 1. Push to GitHub
+The app reads/writes a single JSON blob in cell A1 of your shared Sheet. Simple and free.
+
+## Deploy to GitHub Pages
 
 ```bash
-git init
-git add .
-git commit -m "Black Box v1"
+git init && git add . && git commit -m "Initial commit"
 gh repo create black-box --public --source=. --push
 ```
 
-### 2. Enable GitHub Pages
+Then: **GitHub repo → Settings → Pages → Source: GitHub Actions**
 
-1. Go to your repo → **Settings → Pages**
-2. Under **Source**, choose **GitHub Actions**
-3. The workflow runs automatically on every push to `main`
-4. Your app URL: `https://<username>.github.io/black-box/`
+App live at: `https://YOUR-USERNAME.github.io/black-box/`
 
-> **Note:** If deploying to a subdirectory (not a `<username>.github.io` root repo), update `"start_url"` and `"scope"` in `manifest.json` to `/black-box/`, and the asset URLs in `sw.js` to use `/black-box/` prefix.
+## Google Setup (one person does this, ~5 min)
 
-### 3. Add icons
+### 1. Google Cloud project
+- [console.cloud.google.com](https://console.cloud.google.com) → New project → **BlackBox**
+- APIs & Services → Library → enable **Google Sheets API** + **Google Drive API**
+- OAuth consent screen → External → App name: Black Box → add scopes `spreadsheets` and `drive.file`
+- Credentials → Create → OAuth 2.0 Client ID → **Web application**
+- Authorised JS origins: `https://YOUR-USERNAME.github.io` (and `http://localhost:8080` for testing)
+- Copy the **Client ID**
 
-Place two PNGs in the `icons/` folder:
-- `icon-192.png` — 192×192 px
-- `icon-512.png` — 512×512 px
+### 2. Shared Google Sheet
+- Create a new Google Sheet
+- Share it as **Editor** with all household members (or "Anyone with link can edit")
+- Copy the Sheet ID from the URL: `docs.google.com/spreadsheets/d/**SHEET_ID**/edit`
 
-Use [maskable.app/editor](https://maskable.app/editor) to ensure safe zone for Android rounded corners. A simple black square with a white box icon works great.
+### 3. Shared Drive folder
+- Create a Google Drive folder called **BlackBox Photos**
+- Share as **Editor** with all household members
+- Open it, copy the folder ID from the URL: `drive.google.com/drive/folders/**FOLDER_ID**`
 
-### 4. Install on Android
+### 4. Configure the app
+- Open Black Box → **Settings**
+- Paste Client ID, Sheet ID, and Folder ID
+- Tap **Save & Sign In** → Google sign-in popup → approve
+- Each household member does this on their own device with their own Google account
 
-1. Open the GitHub Pages URL in **Chrome for Android**
-2. Tap **⋮ → Add to Home Screen**
-3. App opens standalone — no browser chrome
+## Add Icons
 
----
+Drop `icon-192.png` (192×192) and `icon-512.png` (512×512) in the `icons/` folder.
+Use [maskable.app](https://maskable.app/editor) to make them maskable.
 
-## Google Drive Photo Sharing
+## Install on Android
 
-All household members share photos via a single Google Drive folder.
+1. Open your GitHub Pages URL in Chrome
+2. Menu → **Add to Home Screen** → Install
+3. Launches as a standalone app
 
-### Setup (one person does this once)
-
-1. **Create a Google Cloud project:**
-   - Go to [console.cloud.google.com](https://console.cloud.google.com)
-   - Create a new project (e.g. "Black Box")
-   - Enable the **Google Drive API**
-
-2. **Create OAuth credentials:**
-   - Go to **APIs & Services → Credentials → Create Credentials → OAuth Client ID**
-   - Application type: **Web application**
-   - Add your GitHub Pages URL to **Authorised JavaScript origins**
-   - Copy the **Client ID**
-
-3. **Create a shared Drive folder:**
-   - Open Google Drive, create a folder (e.g. "Black Box Photos")
-   - Right-click → Share → add all household members' Google accounts
-   - Open the folder and copy the ID from the URL:
-     `drive.google.com/drive/folders/`**`COPY_THIS_PART`**
-
-4. **In the app (Settings tab):**
-   - Tap **Sign in with Google** → enter your Client ID when prompted
-   - Paste the shared folder ID → tap **Save Folder ID**
-   - Each household member signs in with their own Google account and uses the same folder ID
-
-### How it works
-
-- Photos are uploaded to the shared folder when you save a box
-- All household members see the same photos via Drive's public share link
-- If offline or not signed in, photos are stored locally as fallback
-
----
-
-## File Structure
+## File structure
 
 ```
-index.html                    ← App shell + all views
-styles.css                    ← All styles
-app.js                        ← All logic (CRUD, Drive, search, UI)
-sw.js                         ← Service Worker (offline cache)
-manifest.json                 ← PWA manifest
-icons/
-  icon-192.png                ← Add this manually
-  icon-512.png                ← Add this manually
+index.html          — Complete self-contained app (HTML + CSS + JS all inline)
+sw.js               — Service Worker for offline support
+manifest.json       — PWA manifest
 .github/workflows/
-  deploy.yml                  ← Auto-deploy to GitHub Pages
+  deploy.yml        — Auto-deploy to GitHub Pages
+icons/
+  icon-192.png      — Add this
+  icon-512.png      — Add this
 ```
-
----
-
-## Data
-
-- **Box data** is stored in `localStorage` on each device
-- **Photos** are uploaded to Google Drive and referenced by URL
-- **Export JSON** (Settings) creates a full local backup
-- There is no automatic sync of box data between devices — Drive handles photos only
-
----
-
-## Licence
-
-MIT
